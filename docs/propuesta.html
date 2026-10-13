@@ -1,0 +1,871 @@
+<title>Lealtad por Teléfono en Gasolineras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F5F6F3; --surface:#FFFFFF; --surface-2:#ECEFEA; --ink:#1A2024; --muted:#5C6963; --line:#D4DAD5;
+  --accent:#0F5E53; --accent-ink:#FFFFFF; --accent-soft:#DDEDE7; --accent-line:#93C6B8;
+  --warn:#9A5606; --warn-soft:#F7EBD8; --crit:#A62634; --crit-soft:#F8E1E3; --ok:#1E6F3A;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101615; --surface:#171F1E; --surface-2:#1E2827; --ink:#E6ECE8; --muted:#98A69F; --line:#2B3634;
+    --accent:#4CC7B1; --accent-ink:#0C1B18; --accent-soft:#16302A; --accent-line:#2C5A50;
+    --warn:#E3A94E; --warn-soft:#382B14; --crit:#F08C96; --crit-soft:#3B1C20; --ok:#6FCF8A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101615; --surface:#171F1E; --surface-2:#1E2827; --ink:#E6ECE8; --muted:#98A69F; --line:#2B3634;
+  --accent:#4CC7B1; --accent-ink:#0C1B18; --accent-soft:#16302A; --accent-line:#2C5A50;
+  --warn:#E3A94E; --warn-soft:#382B14; --crit:#F08C96; --crit-soft:#3B1C20; --ok:#6FCF8A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,4.5vw,3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.75rem;font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.2rem;font-weight:700;margin-top:2rem}
+h4{font-size:1rem;font-weight:700;margin-top:1.25rem}
+p{margin:.75rem 0;max-width:68ch}
+ul,ol{max-width:72ch;padding-left:1.25rem}
+li{margin:.3rem 0}
+li::marker{color:var(--muted)}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);padding:.1em .35em;border-radius:3px}
+pre{font-family:var(--mono);font-size:.82rem;line-height:1.5;background:var(--surface-2);border:1px solid var(--line);padding:1rem;overflow-x:auto;border-radius:4px;margin:1rem 0}
+pre.mermaid{background:var(--surface)}
+.eyebrow{font-family:var(--body);font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;padding:.05em .4em;border-radius:3px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;white-space:nowrap}
+.tag.doc{border-color:var(--accent-line);color:var(--accent)}
+.tag.cifra{border-color:#B8A26A;color:var(--warn)}
+.tag.hip{border-color:var(--line);color:var(--muted);font-style:italic}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:.15em .6em;border-radius:999px;background:var(--accent-soft);color:var(--accent);letter-spacing:.02em}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.crit{background:var(--crit-soft);color:var(--crit)}
+.pill.neutral{background:var(--surface-2);color:var(--muted)}
+.wrap{max-width:1220px;margin:0 auto;padding:0 1.25rem 4rem;display:grid;grid-template-columns:230px minmax(0,1fr);gap:2.5rem}
+header.hero{grid-column:1/-1;padding:3rem 0 2rem;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:2rem;align-items:end}
+header .lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+nav.toc{position:sticky;top:1rem;align-self:start;font-size:.85rem;max-height:calc(100vh - 2rem);overflow:auto;padding-right:.5rem}
+nav.toc ol{list-style:none;padding:0;margin:0;counter-reset:toc}
+nav.toc li{margin:0;counter-increment:toc}
+nav.toc a{display:flex;gap:.6rem;padding:.35rem .5rem;color:var(--ink);text-decoration:none;border-left:2px solid transparent;border-radius:0 3px 3px 0}
+nav.toc a::before{content:counter(toc,decimal-leading-zero);font-family:var(--mono);font-size:.72rem;color:var(--muted);padding-top:.15rem;min-width:1.5rem}
+nav.toc a:hover{background:var(--surface-2)}
+nav.toc a.active{border-left-color:var(--accent);background:var(--accent-soft)}
+main{min-width:0}
+section.block{padding:2.5rem 0;border-bottom:1px solid var(--line)}
+section.block>.eyebrow{display:flex;gap:.75rem;align-items:baseline;margin-bottom:.4rem}
+section.block>.eyebrow .n{font-family:var(--mono);color:var(--accent);font-size:.85rem;letter-spacing:0}
+.ticket{font-family:var(--mono);font-size:.78rem;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1rem 1.1rem;max-width:340px;line-height:1.6;position:relative}
+.ticket::before,.ticket::after{content:"";position:absolute;left:0;right:0;height:6px;background:radial-gradient(circle,var(--bg) 3px,transparent 3.5px) 0 0/12px 6px repeat-x}
+.ticket::before{top:-1px}.ticket::after{bottom:-1px;transform:rotate(180deg)}
+.ticket .row{display:flex;justify-content:space-between;gap:1rem}
+.ticket .dash{border-top:1px dashed var(--line);margin:.4rem 0}
+.ticket .big{font-size:1.05rem;font-weight:600}
+.tbl{overflow-x:auto;margin:1rem 0;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;vertical-align:top;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.8rem;white-space:nowrap}
+.tbl.wide table{min-width:1100px}
+.tbl.mid table{min-width:760px}
+td small,li small{color:var(--muted)}
+.grid{display:grid;gap:1rem;margin:1rem 0}
+.grid.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1rem 1.1rem}
+.card h4{margin-top:0}
+.card p{font-size:.9rem;margin:.4rem 0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:.8rem 1rem;margin:1.25rem 0;border-radius:0 4px 4px 0;max-width:72ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout p{margin:.25rem 0;font-size:.92rem}
+.promo{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1rem 1.1rem;display:grid;grid-template-columns:1fr;gap:.35rem}
+.promo header{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;flex-wrap:wrap}
+.promo header h4{margin:0;font-size:1.02rem}
+.promo .meta{font-size:.78rem;color:var(--muted)}
+.promo dl{display:grid;grid-template-columns:110px 1fr;gap:.2rem .8rem;margin:.3rem 0 0;font-size:.86rem}
+.promo dt{color:var(--muted)}
+.promo dd{margin:0}
+.promos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.flow{list-style:none;padding:0;margin:1rem 0;max-width:none;display:grid;gap:.5rem}
+.flow li{display:grid;grid-template-columns:2.2rem 1fr auto;gap:.8rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:.7rem .9rem;margin:0}
+.flow .letter{font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--accent);line-height:1}
+.flow .t{font-family:var(--mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.flow p{margin:.15rem 0;font-size:.9rem;max-width:none}
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1.25rem;margin:1.25rem 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem}
+.sim .inputs{display:grid;gap:.5rem}
+.sim label{display:grid;grid-template-columns:1fr 92px;gap:.6rem;align-items:center;font-size:.84rem}
+.sim label span small{display:block;color:var(--muted);font-size:.73rem}
+.sim input[type=number]{font-family:var(--mono);font-size:.85rem;padding:.35rem .45rem;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);text-align:right;width:100%}
+.sim input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.sim .scen{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.sim button{font:inherit;font-size:.8rem;font-weight:600;padding:.35rem .7rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.sim button:hover{border-color:var(--accent)}
+.sim button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.sim button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.out{display:grid;gap:.4rem}
+.out .line{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px dashed var(--line);font-size:.88rem}
+.out .line .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.85rem;white-space:nowrap}
+.out .line.total{border-bottom:none;border-top:2px solid var(--ink);font-weight:600;font-size:1rem;padding-top:.6rem}
+.out .neg{color:var(--crit)} .out .pos{color:var(--ok)}
+.verdict{margin-top:.6rem;font-size:.85rem;padding:.6rem .8rem;border-radius:4px;background:var(--surface-2)}
+.mock{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:.9rem;font-size:.82rem}
+.mock .bar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:.6rem}
+.mock .panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.7rem .8rem;margin-bottom:.5rem}
+.mock .panel .h{font-weight:600;display:flex;justify-content:space-between}
+.mock .btn{display:inline-block;padding:.35rem .7rem;border-radius:4px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:.78rem;margin:.25rem .25rem 0 0}
+.mock .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.mock .digits{font-family:var(--mono);font-size:1.4rem;letter-spacing:.12em;text-align:center;padding:.4rem;background:var(--bg);border-radius:4px}
+.foot{color:var(--muted);font-size:.82rem;padding-top:1.5rem}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:1rem}
+  header.hero{grid-template-columns:1fr}
+  nav.toc{position:static;max-height:none;display:flex;overflow-x:auto;border-bottom:1px solid var(--line);padding-bottom:.5rem}
+  nav.toc ol{display:flex;gap:.25rem}
+  nav.toc a{white-space:nowrap;border-left:none;border-bottom:2px solid transparent}
+  nav.toc a.active{border-bottom-color:var(--accent)}
+  .grid.c2,.grid.c3,.promos,.sim{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div>
+    <div class="eyebrow">Propuesta de negocio y especificación para desarrollo · v1.0</div>
+    <h1 style="margin:.5rem 0 .8rem">Lealtad por número telefónico para gasolineras en México</h1>
+    <p class="lede">Plataforma que contratan grupos gasolineros y estaciones independientes para que sus clientes acumulen y canjeen en la isla diciendo su teléfono. Puntos por litro en combustible, puntos por peso en tienda y servicios, canje protegido, control de fraude de despachadores y utilidad incremental medible contra grupo de control.</p>
+    <p style="font-size:.85rem;color:var(--muted)">Español de México · MXN · fecha: 7 de septiembre de 2026 · el código del MVP vive en el repositorio junto a este documento</p>
+  </div>
+  <div class="ticket" aria-label="Ejemplo de comprobante de lealtad">
+    <div class="row"><span>GASOLINERA CENTRO · BOMBA 4</span><span>#T-118342</span></div>
+    <div class="dash"></div>
+    <div class="row"><span>Cliente</span><span>+52 55 •• •• 43 17</span></div>
+    <div class="row"><span>Magna 35.20 L × $23.89</span><span>$840.93</span></div>
+    <div class="row"><span>Tienda: café + agua</span><span>$52.00</span></div>
+    <div class="row"><span>Canje 200 pts en combustible</span><span>−$20.00</span></div>
+    <div class="row big"><span>Pagado</span><span>$872.93</span></div>
+    <div class="dash"></div>
+    <div class="row"><span>Puntos: 34 L elegibles + tienda</span><span>+49</span></div>
+    <div class="row"><span>Saldo</span><span>79 pts ≈ $7.90</span></div>
+    <div class="row"><span>Sello de carga</span><span>4 de 6</span></div>
+    <div class="dash"></div>
+    <div style="color:var(--muted)">Saldo y factura: lealtad.mx/c/8f3k</div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Contenido">
+<ol>
+  <li><a href="#supuestos">Supuestos</a></li>
+  <li><a href="#s1">Recomendación ejecutiva</a></li>
+  <li><a href="#s2">Referentes con fuentes</a></li>
+  <li><a href="#s3">Propuesta de valor</a></li>
+  <li><a href="#s4">Flujo en la isla</a></li>
+  <li><a href="#s5">Funcionalidades por fase</a></li>
+  <li><a href="#s6">Catálogo de promociones</a></li>
+  <li><a href="#s7">Simulador económico</a></li>
+  <li><a href="#s8">Pantallas y mensajería</a></li>
+  <li><a href="#s9">Datos, arquitectura y seguridad</a></li>
+  <li><a href="#s10">Aceptación y pruebas</a></li>
+  <li><a href="#s11">Plan del piloto</a></li>
+  <li><a href="#s12">Cobro y costos</a></li>
+  <li><a href="#s13">Decisiones pendientes</a></li>
+  <li><a href="#s14">Plataforma de campañas</a></li>
+</ol>
+</nav>
+
+<main>
+
+<section class="block" id="supuestos">
+  <div class="eyebrow"><span class="n">00</span> Supuestos declarados</div>
+  <h2>Sobre qué se construye esta propuesta</h2>
+  <ul>
+    <li><strong>Cliente de la plataforma:</strong> grupos gasolineros de 1 a 50 estaciones, con tienda de conveniencia propia o concesionada, y en algunos casos lavado y venta de lubricantes. El piloto se hace en una ciudad.</li>
+    <li><strong>Precio y margen del combustible:</strong> en 2026 la gasolina regular opera bajo la Estrategia Nacional de precios con tope voluntario menor a $24 por litro (<a href="https://www.milenio.com/negocios/precio-de-la-gasolina-en-2026-cuanto-costara-y-por-que">Milenio</a>, <a href="https://gasolinerasmx.com/renovacion-estrategia-precio-gasolina-diesel-2026/">renovación por 6 meses</a>). El reporte Quién es Quién de PROFECO de enero de 2026 muestra estaciones con márgenes de $2.50 a $2.76 por litro en regular (<a href="https://combustibles.profeco.gob.mx/qqpgasolina/2026/QQPGASOLINA_012626.pdf">PROFECO</a>). Para el diseño se asume un margen bruto de estación de <strong>$1.80 a $2.40 por litro</strong> en regular <span class="tag hip">hipótesis</span>, más alto en Premium y menor en diésel.</li>
+    <li><strong>Consecuencia central:</strong> el combustible se premia <em>por litro</em>, no por peso, porque el precio está regulado y el margen es fijo por litro. La tienda, el lavado y los lubricantes se premian por peso porque su margen es de 25 a 60 %.</li>
+    <li><strong>Equivalencia por defecto:</strong> 1 punto = $0.10. Regular y diésel: 1 punto por litro (10 centavos, cerca de 0.4 % del precio y 5 % del margen). Premium: 2 puntos por litro. Tienda y servicios: 3 puntos por cada $10 (3 %). Cada grupo ajusta con el simulador.</li>
+    <li><strong>Canje:</strong> desde 100 puntos ($10) en múltiplos de 100, aplicable a combustible o tienda. No se acumulan puntos sobre la parte pagada con puntos.</li>
+    <li><strong>Los puntos no son dinero:</strong> no se canjean por efectivo ni se transfieren; caducan a 12 meses sin cargar. <span class="tag hip">hipótesis legal a confirmar</span> respecto a la Ley Fintech.</li>
+    <li><strong>Factura (CFDI):</strong> la emite el sistema de la estación conforme a controles volumétricos y anexos 21 y 22 de la RMF 2026 (<a href="https://gasolinerasenmexico.net/controles-volumetricos-sat-2026-guia-gasolineras/">guía</a>). La plataforma no factura; en fase 2 guarda el RFC del cliente para acelerar el trámite en el portal.</li>
+    <li><strong>Modos:</strong> autónomo (tableta o teléfono en la isla; el despachador captura litros, bomba y folio) e integrado (el controlador de estación envía el despacho por API). Sistemas comunes en México como ControlGAS de ATIO o Controlux se integran uno por uno; no se promete compatibilidad automática.</li>
+    <li><strong>Tipo de cambio:</strong> 18.50 MXN por USD para estimar mensajería de WhatsApp.</li>
+    <li><strong>Etiquetas:</strong> <span class="tag doc">documentado</span> función publicada · <span class="tag cifra">cifra reportada</span> dato dicho por la empresa · <span class="tag hip">hipótesis</span> estimación propia.</li>
+  </ul>
+</section>
+
+<section class="block" id="s1">
+  <div class="eyebrow"><span class="n">01</span> Recomendación ejecutiva</div>
+  <h2>Qué construir y qué esperar</h2>
+  <p><strong>Recomendación:</strong> construir en 14 a 16 semanas un MVP de lealtad por teléfono operado desde la isla, con puntos por litro y sellos por carga, puntos por peso en tienda, canje protegido con código de un solo uso, cupones básicos, portal del cliente en navegador, conciliación por turno y reporte de utilidad incremental. Piloto de 90 días con 6 a 10 estaciones de 2 o 3 grupos en una ciudad.</p>
+  <div class="grid c3">
+    <div class="card"><h4>Por qué el teléfono en la isla</h4><p>El cliente no baja del auto. Decir 10 dígitos al despachador es lo único que no agrega fricción. BPme Rewards y Spin Premia en OXXO GAS ya usan el teléfono como llave en México, así que el hábito existe.</p></div>
+    <div class="card"><h4>Por qué premiar litros y frecuencia</h4><p>El consumo de combustible por vehículo es casi constante; el juego es la participación en el tanque ("share of tank") y la venta de tienda. Premiar por litro y con sellos por carga mueve visitas; premiar por peso en combustible solo regala margen.</p></div>
+    <div class="card"><h4>Por qué un programa propio</h4><p>BP y Petro Seven apoyaron su lealtad en PAYBACK y tuvieron que rehacerla cuando PAYBACK salió de México en 2023. Un grupo gasolinero mediano necesita un programa que le pertenezca, con sus datos y sus reglas.</p></div>
+  </div>
+  <h3>Cifras guía del caso base</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Concepto</th><th class="num">Valor</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Cuota mensual por estación</td><td class="num">$1,499</td><td>Plan Grupo desde 5 estaciones: $1,199.</td></tr>
+      <tr><td>Utilidad incremental neta mensual, estación con 1,500 miembros activos</td><td class="num">≈ $18,000</td><td>Simulador, escenario base: 10 centavos por litro, 8 % más cargas, tienda incluida.</td></tr>
+      <tr><td>Lift de equilibrio de esa estación</td><td class="num">≈ 4 %</td><td>Incremento mínimo en cargas de miembros para cubrir recompensas, mensajes y suscripción.</td></tr>
+      <tr><td>Tiempo objetivo de identificación recurrente</td><td class="num">≤ 10 s</td><td>Percentil 90 en la isla, medido en el piloto.</td></tr>
+      <tr><td>Riesgo número uno</td><td class="num">despachador</td><td>Asignar cargas no identificadas a su propio número. Ver controles en secciones 4 y 9.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><p><strong>Advertencia económica:</strong> con margen de $2 por litro, cada 10 centavos de recompensa por litro consume 5 % del margen del combustible. El programa solo es rentable si la mayoría del beneficio se entrega en tienda y servicios, o si el incremento de cargas supera el 4 %. El simulador lo muestra con sus números.</p></div>
+</section>
+
+<section class="block" id="s2">
+  <div class="eyebrow"><span class="n">02</span> Comparación de referentes</div>
+  <h2>Ocho programas de combustible, tres de ellos en México</h2>
+  <p>Se revisaron fuentes oficiales o prensa con fecha. Varias páginas oficiales mexicanas no estaban accesibles al momento de la consulta y se indica cuando el dato proviene de un extracto o de prensa.</p>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Referente</th><th>Registro e identificación</th><th>Acumulación y canje</th><th>Promociones y automatización</th><th>Evidencia de escala o resultados</th><th>Fricciones, límites y aplicabilidad</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>BPme Rewards</strong><br><small>México, BP</small></td>
+        <td><span class="tag doc">doc</span> Registro digital con número de teléfono en bpmerewards.com.mx; sin tarjeta física. Antes operó con monedero PAYBACK (lanzamiento nov 2019, <a href="https://www.eluniversal.com.mx/cartera/bp-lanza-programa-de-lealtad-en-consumo-de-gasolina-premium-regular-y-diesel/">El Universal</a>).</td>
+        <td><span class="tag doc">doc</span> Puntos por cada litro de Regular, Premium y Diésel; canje pidiendo al despachador pagar con puntos; mínimo 10 puntos = $1.00 MXN. Fuente: extracto de <a href="https://www.bpmerewards.com.mx/faq">preguntas frecuentes</a> (página no accesible al consultar, sep 2026).</td>
+        <td><span class="tag doc">doc</span> Promociones en app BPme y redes; multiplicadores por temporada.</td>
+        <td><span class="tag cifra">cifra</span> Cerca de 500 estaciones BP en 29 estados al relanzamiento de 2023 (El Universal). No publica miembros activos.</td>
+        <td>Es el modelo más cercano: teléfono, puntos por litro, canje en isla. Lección: tuvo que rehacer el programa al salir PAYBACK. Punto de valor de $0.10 confirma nuestra equivalencia.</td>
+      </tr>
+      <tr>
+        <td><strong>Spin Premia en OXXO GAS</strong><br><small>México, FEMSA</small></td>
+        <td><span class="tag doc">doc</span> App Spin Premia o teléfono en caja; tarjeta digital. Alianza con términos publicados (<a href="https://oxxogas.com/privacidad/TC%20Aliado%20OXG.%20v10042024.pdf">T&amp;C abril 2024</a>).</td>
+        <td><span class="tag doc">doc</span> 1 punto por cada 2 litros de Magna, Premium o Diésel según <a href="https://oxxogas.com/articulo/spin-premia-oxxogas">oxxogas.com</a>; puntos canjeables en OXXO y socios. <span class="tag hip">hip</span> Valor del punto cercano a $0.10, a confirmar en la app.</td>
+        <td><span class="tag doc">doc</span> Bonos de puntos extra por primera carga, promociones cruzadas con OXXO.</td>
+        <td><span class="tag cifra">cifra</span> Spin Premia en total: 28.1 millones de usuarios activos al 4T 2025 (<a href="https://www.femsa.com/es/sala-de-prensa/comunicado/femsa-4t-resultados/">FEMSA</a>). No desglosa OXXO GAS.</td>
+        <td>Ecosistema cerrado; su fuerza es canjear en OXXO. Para un grupo independiente, la lección es dar el canje en tienda propia, donde el margen lo permite.</td>
+      </tr>
+      <tr>
+        <td><strong>Petro Seven</strong><br><small>México, 7-Eleven</small></td>
+        <td><span class="tag doc">doc</span> Operó con monedero PAYBACK y alianzas con American Express y Santander (<a href="https://www.capitalmexico.com.mx/nacional/pemex-oxxo-gas-petro-seven-hidrosina-british-petroleum/">Capital México</a>).</td>
+        <td><span class="tag hip">pendiente</span> Su mecánica actual tras la salida de PAYBACK no se verificó en fuente oficial durante esta revisión.</td>
+        <td>Promociones con causa social y alianzas bancarias.</td>
+        <td>Sin cifras públicas verificadas.</td>
+        <td>Segundo caso de dependencia de coalición. Confirma que la red compartida debe ser fase 3 y con reglas de liquidación.</td>
+      </tr>
+      <tr>
+        <td><strong>Shell ClubSmart</strong><br><small>España (DISA); referencia documentada</small></td>
+        <td><span class="tag doc">doc</span> Tarjeta gratuita en estación o app; número de socio.</td>
+        <td><span class="tag doc">doc</span> 1 punto por litro en gasolina y diésel, 2 puntos por litro en V-Power; canje en combustible, tienda o catálogo (<a href="https://clubsmart.disagrupo.es/Home/FAQ">FAQ ClubSmart</a>).</td>
+        <td><span class="tag doc">doc</span> Multiplicadores mensuales (4×1 en septiembre) y doble puntos por combustible premium (<a href="https://clubsmart.disagrupo.es/promotions">promociones</a>).</td>
+        <td>No publica miembros. La operación de Shell en México no se verificó y no se usa como referencia.</td>
+        <td>Confirma la práctica de premiar más el combustible premium, que tiene mejor margen. El catálogo de regalos es demasiado complejo para un grupo pequeño.</td>
+      </tr>
+      <tr>
+        <td><strong>Exxon Mobil Rewards+</strong><br><small>EE. UU.</small></td>
+        <td><span class="tag doc">doc</span> App con pago, o teléfono y NIP en la bomba.</td>
+        <td><span class="tag doc">doc</span> 3 puntos por galón, 6 en Premium desde mayo 2025, 2 puntos por dólar en tienda y lavado; 100 puntos = 1 USD (<a href="https://www.exxon.com/en/rewards-program">exxon.com</a>).</td>
+        <td><span class="tag doc">doc</span> "Frequent Filler": bono por 100 galones al mes; ofertas en app.</td>
+        <td>No publica miembros activos en las fuentes revisadas.</td>
+        <td>El "teléfono más NIP en la bomba" es el mecanismo de canje seguro que adoptamos. 3 puntos por galón equivalen a cerca de 0.8 centavos por litro, más bajo que nuestra propuesta.</td>
+      </tr>
+      <tr>
+        <td><strong>Repsol Waylet</strong><br><small>España</small></td>
+        <td><span class="tag doc">doc</span> App de pago con identidad; paga sin pasar por caja.</td>
+        <td><span class="tag doc">doc</span> Descuento directo de 5 a 40 céntimos por litro según servicios energéticos contratados; saldo en la app.</td>
+        <td><span class="tag doc">doc</span> Campañas de descuento doble por temporada (sep a nov 2025).</td>
+        <td><span class="tag cifra">cifra</span> 10 millones de usuarios en febrero de 2026, antes de la meta de 2027 (<a href="https://www.repsol.com/es/sala-prensa/notas-prensa/2026/repsol-alcanza-diez-millones-usuarios-waylet/index.cshtml">Repsol</a>). Son usuarios, no activos.</td>
+        <td>Modelo de app con pago, fuera de alcance del MVP. Lección: expresar el beneficio en centavos por litro es lo que el automovilista entiende.</td>
+      </tr>
+      <tr>
+        <td><strong>Kroger Fuel Points</strong><br><small>EE. UU., supermercado más gasolinera</small></td>
+        <td><span class="tag doc">doc</span> Tarjeta o teléfono del supermercado.</td>
+        <td><span class="tag doc">doc</span> Puntos por compra en súper; 100 puntos = 10 centavos por galón, hasta 1 dólar; 3 centavos automáticos para miembros (<a href="https://www.kroger.com/o/fuel/faqs">Kroger</a>, <a href="https://ir.kroger.com/news/news-details/2026/Kroger-Rewards-Program-Expands-with-New-Ways-to-Save/default.aspx">expansión 2026</a>).</td>
+        <td>Cupones digitales personalizados.</td>
+        <td>No se revisaron cifras de miembros.</td>
+        <td>Inverso al nuestro: la tienda financia el combustible. Aplica a grupos con tienda fuerte: comprar en tienda gana centavos por litro.</td>
+      </tr>
+      <tr>
+        <td><strong>Speedway Speedy Rewards</strong><br><small>EE. UU., 7-Eleven</small></td>
+        <td><span class="tag doc">doc</span> Tarjeta, app o teléfono.</td>
+        <td><span class="tag doc">doc</span> 10 puntos por galón, 20 por dólar en mercancía; 4,375 puntos = 25 centavos por galón (<a href="https://thepointsguy.com/loyalty-programs/fuel-loyalty-programs/">The Points Guy, 2026</a>).</td>
+        <td>Retos mensuales y bonos por producto.</td>
+        <td>No se verificó cifra de miembros.</td>
+        <td>Premia el doble la mercancía que el combustible por dólar: mismo principio que nuestra tienda a 3 %.</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <p>Contexto adicional: ONEXPO, la organización de expendedores, recomienda premiar frecuencia y recencia más que monto, porque el consumo por vehículo es constante, y buscar la participación en el tanque (<a href="https://www.onexpo.com.mx/NOTICIAS/GASOLINERAS-COMO-GENERAR-LEALTAD_JEURn/">ONEXPO, mayo 2023</a>). PAYBACK dejó de acumular en México el 1 de agosto de 2023 y cerró el 1 de noviembre con puntos cancelados (<a href="https://forbes.com.mx/llega-a-su-fin-monedero-de-lealtad-de-78-marcas-en-mexico-conoce-cuales-son/">Forbes México</a>).</p>
+  <h3>Qué adoptar y qué dejar fuera</h3>
+  <div class="grid c2">
+    <div class="card"><h4>Adoptar en el MVP</h4><ul>
+      <li>Teléfono como llave en la isla; NIP o código para canjear (Exxon Mobil, BPme).</li>
+      <li>Puntos por litro con más puntos en Premium (Shell, Exxon Mobil).</li>
+      <li>Puntos por peso en tienda con tasa mayor que en combustible (Speedway).</li>
+      <li>Sellos por carga y meta mensual de litros (Exxon "Frequent Filler", ONEXPO).</li>
+      <li>Beneficio explicado en centavos por litro (Waylet).</li>
+      <li>Valor del punto de $0.10 (BPme, Spin Premia).</li>
+    </ul></div>
+    <div class="card"><h4>Fuera del MVP</h4><ul>
+      <li>App con pago en la bomba (Waylet, Exxon Mobil). Fase 3 y solo con socio adquirente.</li>
+      <li>Catálogo de regalos físicos (ClubSmart). Logística que un grupo mediano no quiere.</li>
+      <li>Coalición de puntos con otras marcas (PAYBACK, Spin Premia). Fase 3 con liquidación resuelta.</li>
+      <li>Descuento automático por litro para todo miembro (Kroger 3 ¢). Regala margen sin cambiar comportamiento.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="block" id="s3">
+  <div class="eyebrow"><span class="n">03</span> Propuesta de valor y diferenciación</div>
+  <h2>Por qué un grupo gasolinero pagaría y por qué el automovilista participaría</h2>
+  <div class="grid c3">
+    <div class="card"><h4>Para el grupo gasolinero</h4><p>Sabe qué porcentaje de sus litros está identificado, cuánto le cuesta cada punto y cuántas cargas extra le trajo el programa. Detecta al despachador que se asigna cargas ajenas. Sube la venta de tienda, donde está el margen.</p></div>
+    <div class="card"><h4>Para el gerente de estación</h4><p>Conciliación por turno: litros despachados contra litros identificados por despachador. Alertas en su teléfono. Promociones por estación dentro de un presupuesto.</p></div>
+    <div class="card"><h4>Para el cliente</h4><p>Dice su número sin bajar del auto, ve su saldo en un enlace y canjea en combustible o tienda. Para quien factura, el portal guarda su RFC y acelera el trámite (fase 2).</p></div>
+  </div>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Alternativa</th><th>Qué le falta</th><th>Nuestra diferencia</th></tr></thead>
+    <tbody>
+      <tr><td>Programa de la marca (BP, Mobil, Shell)</td><td>Solo para estaciones abanderadas; los datos son de la marca; reglas iguales para todos.</td><td>Para grupos con bandera propia o mixta; datos y reglas del grupo; promociones por estación.</td></tr>
+      <tr><td>Coalición (Spin Premia, antes PAYBACK)</td><td>El canje se va a otra marca; dependencia del operador; ya pasó una vez.</td><td>Canje en tienda propia; el pasivo de puntos es del grupo y lo controla.</td></tr>
+      <tr><td>Módulo de lealtad del sistema de control</td><td>Suele ser tarjeta física, sin mensajería, sin control por turno ni medición incremental.</td><td>Teléfono, WhatsApp, conciliación por despachador, grupo de control.</td></tr>
+      <tr><td>Promociones sueltas (lavado gratis, vasos)</td><td>Sin datos, sin recurrencia, sin saber si funcionó.</td><td>Cada promoción con costo, indicador y control.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="s4">
+  <div class="eyebrow"><span class="n">04</span> Flujo en la isla paso a paso</div>
+  <h2>Entre "¿tiene su número?" y el comprobante</h2>
+  <p>Objetivo: una identificación recurrente sin canje agrega <strong>10 segundos o menos</strong> al despacho, medido del toque en "buscar" a ver saldo y promociones. El registro nuevo y la verificación quedan fuera de esa meta. En la isla la identificación ocurre mientras la bomba despacha, así que el tiempo percibido por el cliente suele ser cero.</p>
+  <ol class="flow">
+    <li><span class="letter">A</span><div><p><strong>El cliente da su teléfono</strong> antes de iniciar el despacho (recomendado) o al terminar. El despachador lo teclea en la tableta de la isla; en modo integrado, se asocia a la bomba y a la transacción del dispensario. Alternativa para flotillas: llavero con QR.</p></div><span class="t">3 a 5 s</span></li>
+    <li><span class="letter">B</span><div><p><strong>El sistema identifica la membresía en este grupo</strong> por hash del número normalizado. Devuelve: miembro, número nuevo, o número bloqueado (empleado). Nunca muestra datos de otros grupos.</p></div><span class="t">&lt; 1 s</span></li>
+    <li><span class="letter">C</span><div><p><strong>Alta breve si es nuevo:</strong> teléfono y nombre de pila; dos casillas separadas, participar y recibir promociones; equivalencia en una línea: "Ganas 1 punto por litro; 100 puntos son $10". El aviso corto se muestra y el completo llega por WhatsApp.</p></div><span class="t">20 a 40 s, fuera del objetivo</span></li>
+    <li><span class="letter">D</span><div><p><strong>El despachador ve solo lo necesario:</strong> nombre, puntos, sello de carga, recompensas y promociones activas hoy en esta estación. Teléfono enmascarado, sin historial.</p></div><span class="t">2 s</span></li>
+    <li><span class="letter">E</span><div><p><strong>Se registra el despacho.</strong> Autónomo: bomba, tipo de combustible, litros y folio del ticket; tienda opcional. Integrado: el controlador envía transacción de bomba con litros, precio, hora y folio; también ventas de tienda con líneas.</p></div><span class="t">4 a 6 s (autónomo)</span></li>
+    <li><span class="letter">F</span><div><p><strong>Cálculo de beneficios:</strong> puntos por litro según combustible, puntos de tienda, sello, promociones vigentes y canjes posibles con esta compra.</p></div><span class="t">&lt; 1 s</span></li>
+    <li><span class="letter">G</span><div><p><strong>Canje con confirmación segura:</strong> código de 4 dígitos enviado al teléfono (3 minutos), código de 6 dígitos generado en el portal, o NIP del cliente tecleado en la tableta. Sin confirmación no hay canje. Acumular no requiere confirmación.</p></div><span class="t">15 a 30 s solo si canjea</span></li>
+    <li><span class="letter">H</span><div><p><strong>Al cerrar la venta se aplican canje y acumulación en una transacción.</strong> Reserva no confirmada en 10 minutos se libera. La hora la fija el servidor.</p></div><span class="t">&lt; 1 s</span></li>
+    <li><span class="letter">I</span><div><p><strong>Comprobante, saldo y próxima recompensa</strong> en el portal y por WhatsApp si lo autorizó. El ticket impreso lleva el enlace corto.</p></div><span class="t">asíncrono</span></li>
+  </ol>
+
+  <h3>Excepciones</h3>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Situación</th><th>Regla</th><th>Movimiento en el libro</th></tr></thead>
+    <tbody>
+      <tr><td>Carga cancelada o cortada por la bomba</td><td>Se registra con los litros reales del dispensario; si se anula el folio completo requiere NIP de gerente después de 30 minutos.</td><td>Asiento compensatorio; nunca se borra.</td></tr>
+      <tr><td>Devolución parcial (tienda)</td><td>Se descuentan puntos proporcionales sobre el importe devuelto; saldo negativo permitido hasta 50 puntos.</td><td>Asiento de ajuste negativo ligado a la venta.</td></tr>
+      <tr><td>Pago fallido tras cargar</td><td>La estación debe cobrar de todas formas; la venta queda "pendiente de pago" hasta 10 minutos; si no se confirma, se libera la reserva del canje y no se acumula.</td><td>Reserva expirada, sin asiento definitivo.</td></tr>
+      <tr><td>Cupón vencido</td><td>No aparece en la isla; el gerente puede extenderlo una vez hasta 7 días con registro.</td><td>Cambio de estado con actor y motivo.</td></tr>
+      <tr><td>Número incorrecto</td><td>El gerente reasigna dentro de 48 horas si el cliente correcto presenta el ticket; el otro titular no pierde lo ya canjeado.</td><td>Reversa en A y acumulación en B, ligadas.</td></tr>
+      <tr><td>Carga no identificada reclamada después</td><td>Solo en modo integrado y desde el portal, con folio, monto y hora que coincidan con una transacción sin dueño, máximo una vez al día y dentro de 48 horas. En modo autónomo no se permite, para no abrir la puerta al despachador.</td><td>Acumulación con marca "reclamada".</td></tr>
+      <tr><td>Pérdida de conexión en la isla</td><td>La tableta guarda acumulaciones pendientes (límite: 50 operaciones o 4 horas, máximo 200 litros por operación) y sincroniza al reconectar. No hay canjes sin conexión.</td><td>Cada operación lleva su clave de idempotencia y hora original.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Controles contra el fraude del despachador</h3>
+  <p>Es el riesgo específico de este giro: el despachador asigna a su número, o al de un cómplice, las cargas de clientes que no participan. Controles en el MVP:</p>
+  <ul>
+    <li>Teléfonos de empleados del grupo bloqueados para acumular en cualquier estación del grupo.</li>
+    <li>Máximo 2 cargas y 120 litros por número al día para particulares (configurable; flotillas con cuenta aparte en fase 2).</li>
+    <li>Ventana de asignación: en modo integrado, una transacción de bomba solo puede identificarse dentro de 10 minutos de terminar el despacho.</li>
+    <li>Conciliación por turno y despachador: litros identificados sobre litros despachados. Un despachador muy por encima del promedio de la estación genera alerta al gerente.</li>
+    <li>Concentración: alerta si un mismo número acumula en más de 3 turnos distintos en 7 días o desde más de una bomba en la misma hora.</li>
+    <li>Folio único por estación y día; muestreo aleatorio de tickets para verificación física; auditoría completa por despachador.</li>
+  </ul>
+</section>
+
+<section class="block" id="s5">
+  <div class="eyebrow"><span class="n">05</span> Matriz de funcionalidades por fase</div>
+  <h2>Qué entra en el MVP y qué espera</h2>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Área</th><th>MVP (semanas 1 a 16)</th><th>Fase 2 (meses 5 a 9)</th><th>Fase 3</th></tr></thead>
+    <tbody>
+      <tr><td>Grupo y estaciones</td><td>Alta de grupo, estaciones, roles propietario, administrador, gerente y despachador o cajero, NIP por persona, auditoría.</td><td>Turnos formales, reglas heredadas por estación, presupuestos por estación.</td><td>Multi-marca en un mismo grupo.</td></tr>
+      <tr><td>Identificación</td><td>Teléfono +52, verificación por código, QR del portal.</td><td>Llavero QR para flotillas, cambio de teléfono autoservicio.</td><td>Identificación al pagar con tarjeta tokenizada.</td></tr>
+      <tr><td>Acumulación</td><td>Puntos por litro por combustible, puntos por peso en tienda y servicios, sellos por carga, topes diarios.</td><td>Reglas por producto de tienda en modo integrado; meta mensual de litros; cuentas de flotilla con varios vehículos.</td><td>Puntos compartidos con otros comercios.</td></tr>
+      <tr><td>Canje</td><td>Descuento en combustible o tienda desde 100 puntos, código de un solo uso, reserva con expiración.</td><td>NIP del cliente, lavado gratis con inventario, canje parcial.</td><td>Canje en red.</td></tr>
+      <tr><td>Promociones y cupones</td><td>10 plantillas básicas, cupones con identificador único, vigencia, estado y límite.</td><td>16 plantillas, dos niveles, referidos, Premium upgrade.</td><td>Alianzas con talleres y lavados vecinos.</td></tr>
+      <tr><td>Ventas</td><td>Registro autónomo con bomba, litros y folio; anulación; devolución de tienda; API v1 con idempotencia.</td><td>Conector certificado con uno o dos sistemas de control de estación.</td><td>Integraciones extensas.</td></tr>
+      <tr><td>Mensajería</td><td>WhatsApp de servicio; SMS de respaldo; consentimiento por canal.</td><td>Campañas con presupuesto, frecuencia y grupo de control.</td><td>Segmentación predictiva.</td></tr>
+      <tr><td>Portal del cliente</td><td>Saldo, sellos, próxima recompensa, historial, cupones, baja, ARCO.</td><td>RFC guardado y enlace a facturación de la estación; varios vehículos.</td><td>Monedero de red.</td></tr>
+      <tr><td>Reportes</td><td>Litros identificados, activos a 30 y 90 días, costo de puntos, conciliación por turno, utilidad incremental con control.</td><td>Cohortes, comparación entre estaciones, exportación.</td><td>Recomendaciones automáticas.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="s6">
+  <div class="eyebrow"><span class="n">06</span> Catálogo de promociones y cupones</div>
+  <h2>Dieciséis plantillas para estación de servicio</h2>
+  <p>Montos de ejemplo, a validar con el margen de cada grupo. Todo cupón lleva identificador único, vigencia, restricciones, estado (emitido, reservado, canjeado, vencido, cancelado) y límite de uso; el canje es atómico.</p>
+  <h3>Reglas comunes</h3>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Parámetro</th><th>Valor por defecto</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Carga mínima</td><td>5 litros para acumular; 20 litros para sello</td><td>Excluidos: recargas telefónicas, pago de servicios, cigarros, propina.</td></tr>
+      <tr><td>Base de cálculo</td><td>Combustible: litros elegibles (los no pagados con puntos). Tienda: importe pagado con IVA, sin la parte cubierta con puntos.</td><td>Litros en mililitros enteros; dinero en centavos enteros; redondeo hacia abajo al final.</td></tr>
+      <tr><td>Equivalencia</td><td>Regular y diésel 1 pt/L; Premium 2 pts/L; tienda 3 pts por $10; 1 pt = $0.10</td><td>Texto al cliente: "Cada litro te da 1 punto. 100 puntos son $10 en gasolina o tienda".</td></tr>
+      <tr><td>Vigencia</td><td>Puntos: 12 meses desde la última carga. Cupones: 30 días</td><td>Aviso a 30 y 7 días por canal autorizado y en el portal.</td></tr>
+      <tr><td>Límites</td><td>2 cargas y 120 L por número al día; 1 canje por ticket; presupuesto mensual de puntos por estación con alerta al 80 %</td><td>Al agotar presupuesto, se pausa la promoción y se respetan puntos ganados.</td></tr>
+      <tr><td>Compatibilidad</td><td>Un cupón por ticket; puntos dobles sí se combinan con canje</td><td>Cada regla declara con qué se apila.</td></tr>
+      <tr><td>Devoluciones</td><td>Proporcional en tienda; combustible no se devuelve</td><td>Saldo negativo hasta 50 puntos.</td></tr>
+      <tr><td>Quién financia</td><td>La estación donde se canjea; el grupo puede compensar centralmente (fase 2)</td><td>Importante en grupos con socios distintos por estación.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="promos">
+    <div class="promo"><header><h4>1. Bienvenida en la segunda carga</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Convertir el alta en hábito.</dd><dt>Reglas</dt><dd>Cupón emitido al registrarse, válido desde la segunda carga de 20 L o más, 21 días.</dd><dt>Ejemplo</dt><dd>50 puntos extra ($5) en tu segunda carga.</dd><dt>Costo</dt><dd>$5 por canje, cerca de 0.6 % de una carga de $840.</dd><dt>Indicador</dt><dd>% de registrados con segunda carga a 30 días.</dd><dt>Riesgo</dt><dd>Alta con números ajenos; verificación antes de canjear.</dd></dl></div>
+    <div class="promo"><header><h4>2. Regresa en 7 días</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Participación en el tanque.</dd><dt>Reglas</dt><dd>Segunda carga dentro de 7 días de la anterior: 20 puntos extra.</dd><dt>Ejemplo</dt><dd>$2 extra por volver antes del domingo.</dd><dt>Costo</dt><dd>$2 por carga rápida.</dd><dt>Indicador</dt><dd>Mediana de días entre cargas.</dd><dt>Riesgo</dt><dd>Bajo; el tope diario lo contiene.</dd></dl></div>
+    <div class="promo"><header><h4>3. Sellos: 6 cargas y un lavado o café</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Frecuencia con premio en servicio de bajo costo real.</dd><dt>Reglas</dt><dd>Un sello por carga de 20 L o más, uno al día; premio: lavado básico o café grande.</dd><dt>Ejemplo</dt><dd>6 cargas y lavado de $60 gratis.</dd><dt>Costo</dt><dd>$60 facial, cerca de $20 real; equivale a 0.4 % de seis cargas.</dd><dt>Indicador</dt><dd>Tarjetas completadas y días para completar.</dd><dt>Riesgo</dt><dd>Despachador regalando sellos: folio y litros obligatorios, alerta de concentración.</dd></dl></div>
+    <div class="promo"><header><h4>4. Puntos dobles en horario valle</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Mover cargas a madrugada o media tarde.</dd><dt>Reglas</dt><dd>×2 de 22:00 a 6:00 y de 14:00 a 16:00 en estaciones elegidas; hora del servidor.</dd><dt>Ejemplo</dt><dd>35 L: 70 puntos en vez de 35 ($3.50 extra).</dd><dt>Costo</dt><dd>10 centavos por litro adicionales solo en horas de baja fila.</dd><dt>Indicador</dt><dd>Litros en franja valle contra mes anterior.</dd><dt>Riesgo</dt><dd>Bajo con hora del servidor.</dd></dl></div>
+    <div class="promo"><header><h4>5. Cumpleaños</h4><span class="meta">MVP · dato opcional</span></header><dl><dt>Objetivo</dt><dd>Visita emocional.</dd><dt>Reglas</dt><dd>Fecha opcional; cupón de lavado o 100 puntos válido 15 días; una vez al año.</dd><dt>Ejemplo</dt><dd>Lavado gratis en tu semana de cumpleaños.</dd><dt>Costo</dt><dd>$20 a $60.</dd><dt>Indicador</dt><dd>Tasa de canje.</dd><dt>Riesgo</dt><dd>Cambiar fecha; se fija una vez.</dd></dl></div>
+    <div class="promo"><header><h4>6. Reactivación a 30 días</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Recuperar al que cambió de estación.</dd><dt>Reglas</dt><dd>Sin cargas en 30 días y con consentimiento promocional; cupón de 14 días; grupo de control.</dd><dt>Ejemplo</dt><dd>"Te extrañamos: 100 puntos extra en tu próxima carga".</dd><dt>Costo</dt><dd>Mensaje ≈ $0.60 a $0.80 más $10 si canjea.</dd><dt>Indicador</dt><dd>% de inactivos que cargan en 14 días frente a control.</dd><dt>Riesgo</dt><dd>Esperar el cupón; no repetir antes de 90 días.</dd></dl></div>
+    <div class="promo"><header><h4>7. Meta mensual de litros</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Concentrar el tanque completo en el grupo.</dd><dt>Reglas</dt><dd>150 L en el mes natural: 300 puntos ($30) para el siguiente mes.</dd><dt>Ejemplo</dt><dd>Equivale a 20 centavos por litro solo para quien llena todo aquí.</dd><dt>Costo</dt><dd>$30 por cliente que cumple.</dd><dt>Indicador</dt><dd>% de miembros que cruzan la meta y litros medios.</dd><dt>Riesgo</dt><dd>Litros falsos del despachador; tope diario y conciliación.</dd></dl></div>
+    <div class="promo"><header><h4>8. Referidos tras carga verificada</h4><span class="meta">Fase 2</span></header><dl><dt>Objetivo</dt><dd>Adquisición a costo variable.</dd><dt>Reglas</dt><dd>Premio a ambos solo cuando el nuevo completa una carga pagada de 20 L; máximo 5 al mes.</dd><dt>Ejemplo</dt><dd>50 puntos para cada uno.</dd><dt>Costo</dt><dd>$10 por cliente nuevo real.</dd><dt>Indicador</dt><dd>Costo por cliente activo a 90 días.</dd><dt>Riesgo</dt><dd>Autoreferidos; verificación y límite.</dd></dl></div>
+    <div class="promo"><header><h4>9. Carga y tienda</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Subir la venta de tienda, donde está el margen.</dd><dt>Reglas</dt><dd>Carga de 30 L o más: cupón de $10 en tienda válido hoy.</dd><dt>Ejemplo</dt><dd>Café de $35 por $25 en la misma visita.</dd><dt>Costo</dt><dd>$10 facial, cerca de $4 real en producto de 60 % de margen.</dd><dt>Indicador</dt><dd>% de cargas con compra en tienda.</dd><dt>Riesgo</dt><dd>Bajo.</dd></dl></div>
+    <div class="promo"><header><h4>10. Premium paga más</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Mover clientes a Premium, con mejor margen.</dd><dt>Reglas</dt><dd>2 puntos por litro en Premium de forma permanente; ×3 en campaña.</dd><dt>Ejemplo</dt><dd>35 L Premium: 70 puntos ($7).</dd><dt>Costo</dt><dd>20 centavos por litro sobre un margen mayor.</dd><dt>Indicador</dt><dd>Mezcla Premium sobre total de litros.</dd><dt>Riesgo</dt><dd>Registrar Regular como Premium en modo autónomo; se cruza con inventario por turno.</dd></dl></div>
+    <div class="promo"><header><h4>11. Promoción por estación</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Apoyar una estación nueva o con baja demanda.</dd><dt>Reglas</dt><dd>Multiplicador solo en esa estación dentro de un presupuesto asignado.</dd><dt>Ejemplo</dt><dd>Estación Norte: puntos triples en su primer mes.</dd><dt>Costo</dt><dd>30 centavos por litro acotados por presupuesto.</dd><dt>Indicador</dt><dd>Miembros nuevos y litros identificados en la estación.</dd><dt>Riesgo</dt><dd>Registrar en ella cargas de otra; la estación la fija la sesión.</dd></dl></div>
+    <div class="promo"><header><h4>12. Temporadas</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Vacaciones de Semana Santa y verano, Buen Fin, diciembre.</dd><dt>Reglas</dt><dd>Fechas fijas, puntos dobles o cupón diferido, términos generados.</dd><dt>Ejemplo</dt><dd>Semana Santa: llena el tanque y gana 100 puntos para tu regreso.</dd><dt>Costo</dt><dd>$10 diferido, parte no se canjea.</dd><dt>Indicador</dt><dd>Litros de miembros en temporada contra año previo.</dd><dt>Riesgo</dt><dd>Vigencia poco visible: se imprime en ticket y portal.</dd></dl></div>
+    <div class="promo"><header><h4>13. Cupón para la próxima carga</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Asegurar la siguiente visita.</dd><dt>Reglas</dt><dd>Nace al pagar; válido de 3 a 21 días; no el mismo día.</dd><dt>Ejemplo</dt><dd>Cargaste 40 L hoy: 30 puntos extra si regresas antes del 28.</dd><dt>Costo</dt><dd>$3 si regresa; canje típico 20 a 35 % <span class="tag hip">hip</span>.</dd><dt>Indicador</dt><dd>Tasa de canje y días hasta el canje.</dd><dt>Riesgo</dt><dd>Bajo.</dd></dl></div>
+    <div class="promo"><header><h4>14. Frecuencia semanal</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Ritmo de una carga por semana.</dd><dt>Reglas</dt><dd>Una carga de 20 L en cada una de 4 semanas seguidas: 100 puntos.</dd><dt>Ejemplo</dt><dd>$10 por cuatro semanas de constancia.</dd><dt>Costo</dt><dd>Cerca de 7 centavos por litro sobre 140 L.</dd><dt>Indicador</dt><dd>% de miembros con 4 semanas seguidas.</dd><dt>Riesgo</dt><dd>Bajo.</dd></dl></div>
+    <div class="promo"><header><h4>15. Alianzas con talleres y lavados vecinos</h4><span class="meta">Fase 3</span></header><dl><dt>Objetivo</dt><dd>Tráfico cruzado.</dd><dt>Reglas</dt><dd>Cupón emitido por la estación canjeable en el aliado; liquidación mensual conciliada por la plataforma; devoluciones revierten.</dd><dt>Ejemplo</dt><dd>Cambio de aceite en taller aliado: 100 puntos aquí.</dd><dt>Costo</dt><dd>Pactado; comisión por liquidar.</dd><dt>Indicador</dt><dd>Clientes nuevos cruzados.</dd><dt>Riesgo</dt><dd>Disputas; no sin contrato y fondo de garantía.</dd></dl></div>
+    <div class="promo"><header><h4>16. Descuento inmediato con puntos</h4><span class="meta">MVP</span></header><dl><dt>Objetivo</dt><dd>Canje simple sin catálogo.</dd><dt>Reglas</dt><dd>Desde 100 puntos en múltiplos de 100, en combustible o tienda; no acumula sobre lo cubierto.</dd><dt>Ejemplo</dt><dd>300 puntos = $30 en una carga de $840; acumulas sobre los litros pagados.</dd><dt>Costo</dt><dd>Valor facial completo en combustible; menor en tienda.</dd><dt>Indicador</dt><dd>Tasa de canje y mezcla combustible/tienda.</dd><dt>Riesgo</dt><dd>Doble gasto; reserva y código en transacción atómica.</dd></dl></div>
+    <div class="promo" style="border-color:var(--accent-line)"><header><h4>17. 🎉 Carga, Rasca y Gana</h4><span class="meta">MVP · implementada en web y app</span></header><dl><dt>Objetivo</dt><dd>Subir el ticket de combustible hacia el tanque lleno y dar una emoción inmediata al cargar.</dd><dt>Reglas</dt><dd>Por cada carga de combustible mayor a $500 (sin contar lo pagado con puntos), una tarjeta rascable; máximo una por número al día; vence a 14 días. El premio se sortea en el servidor al emitirla y se acredita al rascar, en el portal del cliente o en la pantalla de la isla. Anular la venta cancela la tarjeta y revierte el premio.</dd><dt>Ejemplo</dt><dd>Premios en puntos: 10 (50 %), 20 (25 %), 50 (15 %), 100 (7 %), 300 (2.5 %) y 1,000 (0.5 %). Siempre gana algo.</dd><dt>Costo</dt><dd>Valor esperado ≈ 37 puntos ($3.70) por tarjeta, cerca de 0.7 % de una carga de $500 y 9 % del margen de esa carga. Presupuesto mensual por estación con pausa automática.</dd><dt>Indicador</dt><dd>% de cargas mayores a $500 antes y después; litros promedio por carga; tasa de rascado a 7 días.</dd><dt>Riesgo</dt><dd>Dividir una carga grande en dos números para ganar dos tarjetas: tope diario y folio por bomba. Sorteos y promociones coleccionables pueden requerir aviso a PROFECO (NOM-028); confirmar antes del piloto.</dd></dl></div>
+  </div>
+
+  <h3 id="s6b">Configuración inicial por segmento de cliente</h3>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Segmento</th><th class="num">Litros por carga</th><th class="num">Cargas al mes</th><th class="num">Ticket tienda</th><th>Mecanismo</th><th>Plantillas</th><th>Piloto</th></tr></thead>
+    <tbody>
+      <tr><td>Automovilista particular</td><td class="num">25 a 40</td><td class="num">2 a 4</td><td class="num">$30 a $80</td><td>Puntos por litro, sellos, cupón de tienda</td><td>1, 2, 3, 9, 13</td><td><span class="pill">Sí</span> Es el volumen.</td></tr>
+      <tr><td>Conductores de plataforma y taxis</td><td class="num">15 a 30</td><td class="num">12 a 25</td><td class="num">$20 a $50</td><td>Meta mensual de litros, frecuencia semanal, valle</td><td>7, 14, 4</td><td><span class="pill">Sí</span> Altísima frecuencia, muy sensibles a centavos por litro.</td></tr>
+      <tr><td>Motociclistas repartidores</td><td class="num">5 a 10</td><td class="num">15 a 30</td><td class="num">$20 a $40</td><td>Sellos por carga desde 5 L, cupón de tienda</td><td>3, 9, 14</td><td><span class="pill">Sí</span> Muchas visitas, tienda frecuente.</td></tr>
+      <tr><td>Flotillas y empresas</td><td class="num">30 a 60</td><td class="num">20 a 200 por cuenta</td><td class="num">bajo</td><td>Cuenta empresarial, estado de cuenta, llavero QR</td><td>7, 11</td><td><span class="pill neutral">Fase 2</span> Necesita facturación y control de vehículos.</td></tr>
+      <tr><td>Transporte pesado a diésel</td><td class="num">150 a 400</td><td class="num">4 a 12</td><td class="num">$60 a $150</td><td>Puntos por litro reducidos, tope alto separado</td><td>7, 10</td><td><span class="pill warn">Después</span> Volumen enorme por cuenta: el tope diario de particulares no aplica y el margen de diésel es menor.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="s7">
+  <div class="eyebrow"><span class="n">07</span> Simulador económico</div>
+  <h2>Cuánto cuesta y cuánto deja por estación</h2>
+  <p>El beneficio en combustible se expresa en centavos por litro y se paga sobre <em>todos</em> los litros canjeados, incluidos los de clientes que iban a cargar aquí de todas formas. El beneficio solo se cuenta sobre las cargas adicionales atribuibles y sobre la venta de tienda que esas cargas traen. Así queda incluida la canibalización.</p>
+  <div class="sim">
+    <div>
+      <div class="scen" role="group" aria-label="Escenarios">
+        <button type="button" data-scen="cons">Conservador</button>
+        <button type="button" data-scen="base" class="on">Base</button>
+        <button type="button" data-scen="opt">Optimista</button>
+      </div>
+      <div class="inputs">
+        <label><span>Miembros activos por mes</span><input type="number" id="n" value="1500" min="1" step="50"></label>
+        <label><span>Cargas por miembro al mes, sin programa</span><input type="number" id="f" value="3" min="0.1" step="0.1"></label>
+        <label><span>Litros por carga</span><input type="number" id="l" value="35" min="1" step="1"></label>
+        <label><span>Margen de la estación por litro (MXN)</span><input type="number" id="mg" value="2" min="0" step="0.1"></label>
+        <label><span>Recompensa en combustible (centavos por litro)<small>Valor facial; 1 punto = 10 centavos</small></span><input type="number" id="cpl" value="10" min="0" step="1"></label>
+        <label><span>Cargas con compra en tienda (%)</span><input type="number" id="att" value="25" min="0" max="100" step="1"></label>
+        <label><span>Ticket de tienda (MXN)</span><input type="number" id="tt" value="60" min="0" step="5"></label>
+        <label><span>Margen de tienda (%)</span><input type="number" id="mt" value="30" min="0" max="95" step="1"></label>
+        <label><span>Cargas adicionales atribuibles (%)<small>Lift contra grupo de control</small></span><input type="number" id="lift" value="8" min="0" max="100" step="0.5"></label>
+        <label><span>Probabilidad de canje (%)</span><input type="number" id="redeem" value="70" min="0" max="100" step="1"></label>
+        <label><span>Costo real como % del valor facial<small>100 % en combustible; 35 a 60 % si el canje va a tienda o lavado</small></span><input type="number" id="cr" value="100" min="0" max="150" step="1"></label>
+        <label><span>Mensajes por miembro al mes</span><input type="number" id="msgs" value="2" min="0" step="0.5"></label>
+        <label><span>Costo por mensaje (MXN)</span><input type="number" id="cm" value="0.35" min="0" step="0.05"></label>
+        <label><span>Suscripción mensual (MXN)</span><input type="number" id="sub" value="1499" min="0" step="1"></label>
+      </div>
+    </div>
+    <div>
+      <div class="out" id="out"></div>
+      <div class="verdict" id="verdict"></div>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:.8rem">Fórmulas: litros base = miembros × cargas × litros. Margen base = litros base × margen por litro + cargas × tienda % × ticket × margen tienda. Incremental = margen base × lift. Valor facial = litros totales × centavos. Costo real = facial × canje × costo real. Lift de equilibrio = (costo real + mensajes + suscripción) ÷ margen base.</p>
+    </div>
+  </div>
+  <h3>Los tres escenarios para la estación ejemplo</h3>
+  <div class="tbl"><table id="scenTable"><thead><tr><th>Concepto</th><th class="num">Conservador</th><th class="num">Base</th><th class="num">Optimista</th></tr></thead><tbody></tbody></table></div>
+  <p>Conservador: lift 4 %, canje 85 %, todo en combustible. Optimista: lift 12 %, canje 65 %, con la mitad del canje en tienda (costo real 70 %). La tabla se recalcula al cambiar cualquier entrada.</p>
+  <h3>Cómo medir utilidad incremental</h3>
+  <ol>
+    <li><strong>Control por promoción.</strong> Cada campaña aparta al azar 10 a 20 % de elegibles sin mensaje ni cupón; se compara cargas y litros a 14 y 30 días. Está en el MVP.</li>
+    <li><strong>Control por estación.</strong> Estaciones comparables del mismo grupo entran un mes después; se compara litros totales y venta de tienda, no solo miembros.</li>
+    <li><strong>Antes y después por cliente</strong> en modo integrado, con folios previos al alta. Es respaldo, no prueba, porque quien se inscribe ya era frecuente.</li>
+    <li><strong>Lectura:</strong> el reporte muestra intervalo; con menos de 200 clientes por brazo advierte que no es concluyente; nunca atribuye al programa la venta total de miembros.</li>
+  </ol>
+</section>
+
+<section class="block" id="s8">
+  <div class="eyebrow"><span class="n">08</span> Pantallas y mensajería</div>
+  <h2>Qué ve cada persona</h2>
+  <div class="grid c2">
+    <div class="mock" aria-label="Boceto de la tableta de isla">
+      <div class="bar"><span>ISLA · Estación Centro · Bomba 4 · Despachador: Luis</span><span>en línea</span></div>
+      <div class="panel"><div class="h"><span>Cliente</span></div><div class="digits">55 4433 4317</div><span class="btn">Buscar</span><span class="btn ghost">QR</span></div>
+      <div class="panel"><div class="h"><span>Ana · miembro desde mar 2026</span><span>230 pts</span></div><div>Sello 3 de 6 · Faltan 70 pts para $30</div><div style="margin-top:.4rem"><span class="pill">Puntos dobles hasta 16:00</span> <span class="pill neutral">Cupón tienda $10 hoy</span></div></div>
+      <div class="panel"><div class="h"><span>Despacho</span><span>Magna · 35.20 L</span></div><div>Folio <code>T-118342</code> · Tienda $52.00</div><div style="margin-top:.4rem">Ganará <strong>+85 pts</strong> (doble) · Canjear 200 pts → −$20</div><span class="btn">Registrar sin canje</span><span class="btn ghost">Canjear (pide código)</span></div>
+    </div>
+    <div class="mock" aria-label="Boceto del portal del cliente">
+      <div class="bar"><span>lealtad.mx/c/8f3k</span><span>Ana</span></div>
+      <div class="panel"><div class="h"><span>Gasolineras Centro</span><span>230 pts ≈ $23</span></div><div>Cada litro te da 1 punto. 100 puntos son $10. Tus puntos vencen el 4 mar 2027 si no cargas.</div></div>
+      <div class="panel"><div class="h"><span>Sellos</span><span>3 de 6</span></div><div>Tres cargas más de 20 L y tu lavado es gratis.</div></div>
+      <div class="panel"><div class="h"><span>Últimas cargas</span></div><div style="font-family:var(--mono);font-size:.75rem">05 sep · Magna 35.2 L · +35 pts · Centro<br>29 ago · Magna 31.0 L · +31 pts · Norte</div></div>
+      <div class="panel"><div class="h"><span>Preferencias</span></div><div>Promociones por WhatsApp: activadas · Darme de baja · Mis datos (ARCO) · RFC para factura (próximamente)</div></div>
+    </div>
+  </div>
+  <h3>Inventario de pantallas</h3>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Grupo</th><th>Pantallas</th><th>Elementos clave</th></tr></thead>
+    <tbody>
+      <tr><td>Alta y configuración del grupo</td><td>Registro, estaciones, combustibles y precios, equivalencias, vigencia, aviso de privacidad, canal.</td><td>Asistente de 5 pasos; vista previa del texto al cliente; simulación con una carga de ejemplo.</td></tr>
+      <tr><td>Isla (despachador)</td><td>Buscar, alta rápida, registrar despacho, canje con código, cola sin conexión.</td><td>Teclado numérico grande, máximo tres toques para acumular, bomba preseleccionada, estado de conexión.</td></tr>
+      <tr><td>Caja y tienda</td><td>Registrar venta de tienda o servicio con teléfono, canje en tienda, devoluciones.</td><td>Mismo cliente que en isla si la visita está abierta.</td></tr>
+      <tr><td>Gerente de estación</td><td>Conciliación por turno y despachador, alertas, promociones de la estación, anulaciones.</td><td>Un número protagonista: litros identificados sobre despachados por turno.</td></tr>
+      <tr><td>Clientes y membresías</td><td>Lista, ficha con saldo y consentimientos, movimientos, notas.</td><td>Teléfono enmascarado; sin historial para despachadores.</td></tr>
+      <tr><td>Puntos, promociones y cupones</td><td>Reglas por combustible y tienda, plantillas, calendario, estados de cupones.</td><td>Texto legal generado; incompatibilidades marcadas; pausa inmediata.</td></tr>
+      <tr><td>Campañas</td><td>Segmento, canal, plantilla, presupuesto, grupo de control, resultados.</td><td>Costo estimado antes de enviar; límite de frecuencia.</td></tr>
+      <tr><td>Reportes</td><td>Litros identificados, activos 30/90, costo de puntos, utilidad incremental, por estación y despachador.</td><td>Exportación por rol.</td></tr>
+      <tr><td>Portal del cliente</td><td>Saldo, sellos, cupones, historial, preferencias, baja, ARCO, cambio de teléfono.</td><td>Sin app; enlace corto en ticket y mensajes; acceso con código.</td></tr>
+      <tr><td>Administración de la plataforma</td><td>Grupos, planes, consumo de mensajes, integraciones, alertas de fraude, soporte auditado.</td><td>Impersonación solo con autorización y registro.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>WhatsApp y SMS</h3>
+  <p>Canal principal: WhatsApp Business Platform vía un proveedor (BSP), plantillas aprobadas por Meta. Meta cobra por mensaje de plantilla entregado según categoría y país; para México en 2026 los precios rondan 0.0305 USD en marketing, 0.0080 USD en utilidad y 0.0085 USD en autenticación, y los de utilidad no se cobran dentro de la ventana de servicio de 24 horas (<a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing/?locale=es_LA">Meta</a>, sep 2026). La tabla de precios es configurable, no código.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Tipo</th><th>Categoría</th><th class="num">Costo MXN</th><th>Consentimiento</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Confirmación de puntos</td><td>Utilidad</td><td class="num">$0.15</td><td>Participación</td><td>"Ana, cargaste 35 L en Gasolineras Centro y ganaste 35 puntos. Tienes 230. Saldo: lealtad.mx/c/8f3k"</td></tr>
+      <tr><td>Código de canje</td><td>Autenticación</td><td class="num">$0.16</td><td>Participación</td><td>"Tu código para canjear 200 puntos es 4827. Vence en 3 minutos. No lo compartas."</td></tr>
+      <tr><td>Recompensa disponible</td><td>Utilidad</td><td class="num">$0.15</td><td>Participación</td><td>"Completaste 6 cargas. Tu lavado gratis te espera hasta el 5 oct."</td></tr>
+      <tr><td>Cupón de regreso</td><td>Marketing</td><td class="num">$0.56 a $0.81</td><td>Autorización publicitaria por canal y grupo</td><td>"Gracias por cargar. 30 puntos extra si regresas antes del 28. Responde BAJA para no recibir promociones."</td></tr>
+      <tr><td>Reactivación</td><td>Marketing</td><td class="num">$0.56 a $0.81</td><td>Autorización publicitaria</td><td>"Ana, hace un mes que no cargas con nosotros. Esta semana 100 puntos extra con tu número. Responde BAJA para no recibir promociones."</td></tr>
+      <tr><td>SMS de respaldo</td><td>—</td><td class="num">$0.50 a $0.90 <span class="tag hip">hip</span></td><td>Igual que WhatsApp</td><td>Cuando el número no tiene WhatsApp o el código no se entrega en 30 s.</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Servicio y promoción separados; promoción requiere consentimiento por canal y grupo, con evidencia.</li>
+    <li>Máximo 4 promocionales por cliente por grupo al mes; presupuesto mensual con corte; BAJA procesado al instante.</li>
+    <li>El saldo siempre está en el portal y el ticket; nada depende de recibir un mensaje.</li>
+  </ul>
+</section>
+
+<section class="block" id="s9">
+  <div class="eyebrow"><span class="n">09</span> Modelo de datos, arquitectura y seguridad</div>
+  <h2>Monolito modular multi-tenant con libro de movimientos</h2>
+  <p>Un servidor modular, base relacional con aislamiento por grupo a nivel de fila, cola para mensajes y tareas, y dos aplicaciones web progresivas (isla y portal). El MVP del repositorio usa SQLite para arrancar sin instalación y el esquema está escrito para migrar a PostgreSQL.</p>
+  <pre class="mermaid">
+flowchart LR
+  subgraph Clientes
+    ISLA[PWA de isla<br/>cola local sin conexión]
+    CAJA[PWA de caja y tienda]
+    PORTAL[PWA portal del cliente]
+    ADMIN[Panel del grupo y plataforma]
+    CTRL[Controlador de estación<br/>ControlGAS, Controlux u otro]
+  end
+  GW[API HTTPS<br/>NIP por persona, llave por estación, límites, idempotencia]
+  APP[Aplicación modular<br/>identidad · membresías · reglas por litro · libro · cupones · conciliación · reportes]
+  DB[(PostgreSQL<br/>RLS por grupo<br/>centavos y mililitros enteros)]
+  Q[[Cola de trabajos]]
+  W[Workers<br/>mensajería · vencimientos · conciliación por turno · alertas]
+  BSP[WhatsApp BSP / SMS]
+  ISLA --> GW
+  CAJA --> GW
+  PORTAL --> GW
+  ADMIN --> GW
+  CTRL --> GW
+  GW --> APP
+  APP --> DB
+  APP --> Q
+  Q --> W
+  W --> DB
+  W --> BSP
+  </pre>
+  <pre class="mermaid">
+erDiagram
+  TENANT ||--o{ STATION : opera
+  TENANT ||--o{ USER : emplea
+  TENANT ||--o{ MEMBERSHIP : inscribe
+  CUSTOMER ||--o{ MEMBERSHIP : participa
+  MEMBERSHIP ||--o{ LEDGER_ENTRY : registra
+  MEMBERSHIP ||--o{ COUPON : posee
+  MEMBERSHIP ||--o{ CONSENT : otorga
+  MEMBERSHIP ||--o{ REDEMPTION : reserva
+  STATION ||--o{ SALE : despacha
+  USER ||--o{ SALE : captura
+  SALE ||--o{ LEDGER_ENTRY : origina
+  CUSTOMER { uuid id PK  string phone_e164  string phone_hash  datetime verified_at  string pin_hash }
+  MEMBERSHIP { uuid id PK  uuid tenant_id FK  uuid customer_id FK  string first_name  int points_balance  int stamps  datetime last_purchase_at }
+  SALE { uuid id PK  uuid tenant_id FK  uuid station_id FK  uuid user_id FK  string pos_reference  int pump_number  string fuel_type  int liters_ml  int price_per_liter_cents  int fuel_cents  int store_cents  int reward_cents  string source  string status  string idempotency_key  datetime dispensed_at }
+  LEDGER_ENTRY { uuid id PK  uuid tenant_id FK  uuid membership_id FK  string kind  int points_delta  uuid sale_id FK  uuid reverses_entry_id FK  uuid actor_user_id FK  datetime created_at }
+  REDEMPTION { uuid id PK  uuid tenant_id FK  uuid membership_id FK  int points  int value_cents  string status  string code_hash  int attempts  datetime expires_at }
+  COUPON { uuid id PK  uuid tenant_id FK  uuid membership_id FK  string code  string status  datetime valid_from  datetime valid_until  int max_uses  int uses }
+  CONSENT { uuid id PK  uuid tenant_id FK  uuid membership_id FK  string purpose  string channel  boolean granted  string evidence  datetime created_at }
+  </pre>
+  <ul>
+    <li><strong>Libro de solo inserción:</strong> devoluciones y anulaciones generan asientos compensatorios que apuntan al original. El saldo se recalcula y verifica cada noche.</li>
+    <li><strong>Litros en mililitros y dinero en centavos</strong>, enteros. Un solo redondeo, al final, hacia abajo.</li>
+    <li><strong>Idempotencia:</strong> toda escritura desde isla o controlador lleva clave única; repetirla devuelve el mismo resultado.</li>
+    <li><strong>Atomicidad:</strong> canje y acumulación de un despacho se confirman en una transacción con bloqueo de la membresía; dos islas no pueden gastar los mismos puntos.</li>
+    <li><strong>Aislamiento:</strong> <code>tenant_id</code> en todas las tablas y políticas a nivel de fila; el cliente global se relaciona con grupos solo por membresías.</li>
+    <li><strong>Conciliación por turno:</strong> proceso que compara litros despachados (del controlador o del corte capturado por el gerente) con litros identificados por despachador y genera alertas.</li>
+    <li><strong>Sin conexión:</strong> la isla encola acumulaciones firmadas con la sesión del despachador dentro de límites; el servidor aplica las reglas vigentes a la hora original y rechaza duplicados.</li>
+  </ul>
+  <h3>API v1 implementada en el MVP del repositorio</h3>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Ruta</th><th>Uso</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td><code>POST /v1/auth/pin</code></td><td>Sesión de despachador o gerente con código de estación y NIP.</td><td>Devuelve token con estación, grupo y rol.</td></tr>
+      <tr><td><code>POST /v1/lookup</code></td><td>Identificar por teléfono dentro del grupo.</td><td>Resumen sin historial; límite de 60 consultas por hora por persona; respuesta uniforme si no existe.</td></tr>
+      <tr><td><code>POST /v1/memberships</code></td><td>Alta breve con consentimientos.</td><td>Registra evidencia y dispara verificación.</td></tr>
+      <tr><td><code>POST /v1/verify/start</code> · <code>/confirm</code></td><td>Verificación de posesión del teléfono.</td><td>Requerida para canjear y para el portal.</td></tr>
+      <tr><td><code>POST /v1/sales</code></td><td>Registrar despacho y tienda con <code>Idempotency-Key</code>.</td><td>Aplica reglas por litro y tienda, topes diarios, bloqueo de empleados, canje confirmado.</td></tr>
+      <tr><td><code>POST /v1/redemptions/prepare</code> · <code>/confirm</code></td><td>Reservar puntos y confirmar con código de un solo uso.</td><td>Reserva expira en 10 minutos; 3 intentos.</td></tr>
+      <tr><td><code>POST /v1/sales/{id}/void</code> · <code>POST /v1/returns</code></td><td>Anulación y devolución parcial de tienda.</td><td>Asientos compensatorios; NIP de gerente según tiempo.</td></tr>
+      <tr><td><code>POST /v1/portal/session/start</code> · <code>/confirm</code> · <code>GET /v1/portal/me</code></td><td>Portal del cliente.</td><td>Sesión propia del cliente, separada de la estación.</td></tr>
+      <tr><td><code>GET /v1/reports/summary</code></td><td>Litros identificados, puntos emitidos y canjeados, activos, por estación y despachador.</td><td>Roles gerente en adelante.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="s9b">Seguridad y privacidad</h3>
+  <ul>
+    <li>Identificador estable UUID; el teléfono es un atributo que cambia o se reasigna. Normalización a E.164 con +52, 10 dígitos nacionales, sin el "1" heredado; búsqueda por hash con sal; número cifrado en reposo.</li>
+    <li>Acumular sin verificar hasta 200 puntos; canjear y entrar al portal requieren verificación. Cambio de teléfono desde el portal verificando el nuevo; recuperación por soporte del grupo con espera de 48 horas.</li>
+    <li>Consulta en isla: solo nombre de pila, saldo y recompensas; no permite canjear ni ver historial. Límite de consultas por persona y hora, respuesta uniforme para inexistente y para membresía en otro grupo, alerta por patrón secuencial.</li>
+    <li>Códigos: máximo 3 por número cada 15 minutos y 10 al día; costo de autenticación monitoreado.</li>
+    <li>Fraude de despachador: controles de la sección 4 más auditoría completa por persona y turno.</li>
+    <li>Doble gasto: reserva con bloqueo, código de un solo uso, clave de idempotencia, transición única de estado del cupón.</li>
+    <li>Soporte de plataforma solo con autorización del propietario, tiempo límite y bitácora visible.</li>
+  </ul>
+  <h4>Marco legal</h4>
+  <ul>
+    <li><strong>Datos personales:</strong> nueva Ley Federal de Protección de Datos Personales en Posesión de los Particulares, publicada el 20 de marzo de 2025 y vigente desde el 21; autoridad: Secretaría Anticorrupción y Buen Gobierno (<a href="https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPDPPP.pdf">texto vigente</a>). El grupo gasolinero es responsable y la plataforma encargada bajo contrato; aviso integral por grupo, simplificado en isla, consentimiento separado para publicidad, mecanismo ARCO. <span class="tag hip">hip</span> Revisar con abogado reglamento y lineamientos.</li>
+    <li><strong>Consumidor:</strong> la Ley Federal de Protección al Consumidor exige promociones veraces con vigencia y condiciones visibles; la NOM-028-SCFI-2007 exige aviso a PROFECO 3 días hábiles antes para promociones coleccionables y sorteos (<a href="https://www.gob.mx/profeco/documentos/aviso-de-promocion">aviso de promoción</a>). <span class="tag hip">hip</span> Confirmar si los sellos digitales cuentan como coleccionables.</li>
+    <li><strong>Precio del combustible:</strong> el descuento con puntos se aplica sobre el importe, no sobre el precio exhibido por litro, para no interferir con la exhibición de precios ni con la Estrategia Nacional. <span class="tag hip">hip</span> Confirmar tratamiento con asesoría del sector.</li>
+    <li><strong>Puntos no son dinero:</strong> sin canje por efectivo ni transferencia; confirmar frente a la Ley Fintech antes de la fase de red.</li>
+    <li><strong>Conservación:</strong> membresías activas y 24 meses después de la última carga; después anonimización. Evidencias de consentimiento y libro, 5 años.</li>
+  </ul>
+</section>
+
+<section class="block" id="s10">
+  <div class="eyebrow"><span class="n">10</span> Criterios de aceptación y pruebas críticas</div>
+  <h2>Lo que debe pasar antes de decir "listo"</h2>
+  <ol>
+    <li><strong>Tiempo en isla.</strong> Cliente existente: del toque en buscar a ver saldo, menos de 10 segundos en percentil 90, dos semanas de piloto, red móvil.</li>
+    <li><strong>Puntos por litro.</strong> 35.2 L de Regular con 1 pt/L y tienda de $52 con 3 pts por $10 acumulan 35 + 15 = 50 puntos; nunca fracciones.</li>
+    <li><strong>No acumular sobre lo canjeado.</strong> Carga de $840.93 (35.2 L) con $20 en puntos acumula sobre 34.36 L, es decir 34 puntos.</li>
+    <li><strong>Sin doble gasto.</strong> Dos islas intentan canjear los mismos 200 puntos: una confirma y la otra recibe saldo insuficiente.</li>
+    <li><strong>Idempotencia.</strong> Un despacho enviado tres veces con la misma clave produce un solo asiento y respuestas idénticas.</li>
+    <li><strong>Reserva expirada.</strong> Canje preparado y no confirmado en 10 minutos: puntos liberados con asiento de liberación.</li>
+    <li><strong>Topes diarios.</strong> Tercera carga del mismo número en el día se rechaza; 121 litros acumulados en el día se rechazan con mensaje claro.</li>
+    <li><strong>Empleado bloqueado.</strong> El teléfono de un despachador del grupo no acumula en ninguna estación del grupo.</li>
+    <li><strong>Aislamiento.</strong> Consulta desde el grupo A de un número con membresía solo en B: respuesta idéntica a inexistente.</li>
+    <li><strong>Enumeración.</strong> Consulta número 61 en una hora por la misma persona se rechaza y genera alerta.</li>
+    <li><strong>Consentimientos.</strong> Sin autorización publicitaria, ninguna campaña puede incluir al miembro; BAJA aplica en menos de 1 minuto y los mensajes de servicio continúan.</li>
+    <li><strong>Sin conexión.</strong> 50 operaciones pendientes; la 51 se rechaza; al reconectar se aplican sin duplicar y con hora original; el canje está deshabilitado sin red.</li>
+    <li><strong>Devolución de tienda.</strong> Venta de tienda de $100 con 30 puntos y devolución de $40: se descuentan 12 puntos.</li>
+    <li><strong>Conciliación por turno.</strong> Con corte de turno capturado, el reporte muestra litros identificados sobre despachados por despachador y marca desviación mayor a 15 puntos sobre el promedio de 14 días.</li>
+    <li><strong>Precisión.</strong> 10,000 despachos con mililitros y centavos aleatorios: la suma del libro coincide al punto y al centavo.</li>
+    <li><strong>ARCO.</strong> Solicitud de acceso desde el portal atendida en menos de 20 días hábiles con registro.</li>
+  </ol>
+</section>
+
+<section class="block" id="s11">
+  <div class="eyebrow"><span class="n">11</span> Plan del piloto</div>
+  <h2>Noventa días, seis a diez estaciones, una ciudad</h2>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Etapa</th><th>Semanas</th><th>Actividades</th><th>Salida</th></tr></thead>
+    <tbody>
+      <tr><td>Reclutamiento</td><td>−4 a 0</td><td>2 o 3 grupos gasolineros; 6 a 10 estaciones activas y 3 a 4 comparables en lista de espera como control. Compromiso de capturar corte por turno.</td><td>Contratos de piloto sin costo 90 días.</td></tr>
+      <tr><td>Alta y capacitación</td><td>1 a 2</td><td>Configuración por grupo, tabletas en isla, capacitación de 30 minutos por turno a despachadores, material en bomba ("Di tu número y gana puntos").</td><td>Todas las estaciones registrando; medición de tiempo activa.</td></tr>
+      <tr><td>Operación y ajuste</td><td>3 a 8</td><td>Visita semanal, revisión de alertas de despachador, ajuste de centavos por litro, activación de reactivación y cupón de tienda con control.</td><td>Primer reporte de utilidad incremental en la semana 6.</td></tr>
+      <tr><td>Medición y decisión</td><td>9 a 13</td><td>Comparar con estaciones control, encuesta a gerentes y clientes, revisión de fraude y costo de mensajes.</td><td>Informe y decisión de lanzamiento con precios.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Dimensión</th><th>Indicador</th><th class="num">Meta</th></tr></thead>
+    <tbody>
+      <tr><td>Adopción</td><td>Litros identificados sobre litros despachados al día 60</td><td class="num">≥ 30 %</td></tr>
+      <tr><td>Adopción</td><td>Miembros activos a 30 días sobre registrados</td><td class="num">≥ 50 %</td></tr>
+      <tr><td>Recompra</td><td>Cargas de miembros frente a control a 90 días</td><td class="num">+6 % o más</td></tr>
+      <tr><td>Tienda</td><td>Cargas con compra en tienda, miembros frente a no miembros</td><td class="num">+5 puntos</td></tr>
+      <tr><td>Rentabilidad</td><td>Estaciones con utilidad incremental neta positiva en el mes 3</td><td class="num">≥ 60 %</td></tr>
+      <tr><td>Rentabilidad</td><td>Costo real de puntos sobre venta de combustible de miembros</td><td class="num">≤ 0.5 %</td></tr>
+      <tr><td>Tiempo en isla</td><td>Identificación recurrente, percentil 90</td><td class="num">≤ 10 s</td></tr>
+      <tr><td>Fraude</td><td>Operaciones marcadas y confirmadas irregulares</td><td class="num">&lt; 0.5 %</td></tr>
+      <tr><td>Disposición a pagar</td><td>Grupos que aceptan el plan propuesto</td><td class="num">≥ 2 de 3</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="s12">
+  <div class="eyebrow"><span class="n">12</span> Modelo de cobro y costos operativos</div>
+  <h2>Cuánto cobra la plataforma y cuánto cuesta operar</h2>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Plan</th><th class="num">Precio mensual</th><th>Incluye</th><th>Para quién</th></tr></thead>
+    <tbody>
+      <tr><td>Estación</td><td class="num">$1,499 por estación</td><td>Puntos por litro y tienda, sellos, 10 plantillas, 3,000 mensajes de servicio, portal, conciliación por turno, reportes.</td><td>Independientes de 1 a 4 estaciones.</td></tr>
+      <tr><td>Grupo</td><td class="num">$1,199 por estación, mínimo 5</td><td>Todo lo anterior, 16 plantillas, campañas con control, presupuestos por estación, API, soporte prioritario.</td><td>Grupos gasolineros.</td></tr>
+      <tr><td>Integración certificada</td><td class="num">$15,000 una vez por sistema</td><td>Conector con el controlador de estación, pruebas de aceptación, soporte de puesta en marcha.</td><td>Modo integrado.</td></tr>
+      <tr><td>Mensajes promocionales</td><td class="num">Costo Meta + 35 %</td><td>Estimación antes de enviar; corte por presupuesto.</td><td>Todos.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Referencia de escala: una estación urbana despacha del orden de 150,000 a 400,000 litros al mes <span class="tag hip">hip</span>; $1,499 equivale a menos de un centavo por litro.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Concepto</th><th class="num">Piloto (mes)</th><th class="num">100 estaciones (mes)</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Infraestructura</td><td class="num">$6,000</td><td class="num">$16,000</td><td>Región cercana a México; alta disponibilidad básica.</td></tr>
+      <tr><td>Mensajería de servicio incluida</td><td class="num">$4,000</td><td class="num">$45,000</td><td>≈ 2,400 mensajes por estación a $0.19.</td></tr>
+      <tr><td>Proveedor de WhatsApp</td><td class="num">$2,000</td><td class="num">$6,000</td><td>Cuota fija más consumo.</td></tr>
+      <tr><td>Tabletas de isla (amortizadas)</td><td class="num">$3,000</td><td class="num">$25,000</td><td>Dos por estación, 24 meses. Puede cobrarse aparte.</td></tr>
+      <tr><td>Soporte y éxito del cliente</td><td class="num">$25,000</td><td class="num">$70,000</td><td>1 persona en piloto; 3 a escala.</td></tr>
+      <tr><td>Ventas e integraciones</td><td class="num">$20,000</td><td class="num">$80,000</td><td>Venta a grupos, ciclo largo.</td></tr>
+      <tr><td>Desarrollo y mantenimiento</td><td class="num">$180,000</td><td class="num">$220,000</td><td>3 a 4 personas.</td></tr>
+      <tr><td><strong>Ingreso a 100 estaciones</strong></td><td class="num">—</td><td class="num">≈ $135,000</td><td>Mezcla 30 Estación, 70 Grupo, más mensajes e integraciones.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><p><strong>Lectura honesta:</strong> el equilibrio operativo incluyendo desarrollo se ubica cerca de 300 estaciones a estos precios. Es mejor que el caso de comercio general porque el ticket por estación es mayor, pero el ciclo de venta a grupos es más largo. Vender a 3 o 4 grupos grandes desde el inicio cambia el cálculo.</p></div>
+</section>
+
+<section class="block" id="s13">
+  <div class="eyebrow"><span class="n">13</span> Decisiones pendientes antes del desarrollo</div>
+  <h2>Lo que debe resolverse con el equipo</h2>
+  <ol>
+    <li><strong>Centavos por litro:</strong> 10 en regular (propuesto) o 5 para arrancar; 20 en Premium.</li>
+    <li><strong>Dónde se canjea por defecto:</strong> combustible (más atractivo, costo real 100 %) o tienda (mejor economía). Propuesta: ambos, con promoción hacia tienda.</li>
+    <li><strong>Mecanismo de canje predeterminado:</strong> código por WhatsApp o NIP del cliente en la tableta.</li>
+    <li><strong>Tabletas de isla:</strong> incluidas en la cuota, vendidas aparte o teléfono del despachador con app (más riesgo).</li>
+    <li><strong>Primer sistema de control a integrar:</strong> elegir entre los usados por los grupos del piloto y negociar acceso a su API.</li>
+    <li><strong>Topes para particulares:</strong> 2 cargas y 120 L diarios (propuesto) y cómo se dan de alta las flotillas en el ínterin.</li>
+    <li><strong>Financiamiento en grupos con socios distintos por estación:</strong> quién absorbe el canje cuando se acumuló en otra estación.</li>
+    <li><strong>Proveedor de WhatsApp y SMS:</strong> cotizar cuota, precio y tiempos de aprobación.</li>
+    <li><strong>Responsable y encargado:</strong> contrato bajo la ley de 2025 y modelo de aviso de privacidad por grupo.</li>
+    <li><strong>NOM-028 y sellos:</strong> confirmar si requiere aviso a PROFECO.</li>
+    <li><strong>Naturaleza de los puntos</strong> frente a la Ley Fintech y tratamiento del descuento frente a la exhibición de precios.</li>
+    <li><strong>Precios:</strong> validar $1,499 / $1,199 / $15,000 con los grupos del piloto.</li>
+    <li><strong>Marca y dominio corto</strong> para el portal impreso en tickets.</li>
+  </ol>
+  <p class="foot">Fuentes consultadas el 7 de septiembre de 2026. Las cifras reportadas por empresas no fueron auditadas por el autor; las hipótesis deben validarse en el piloto o con asesoría legal.</p>
+</section>
+
+<section class="block" id="s14">
+  <div class="eyebrow"><span class="n">14</span> Plataforma de campañas y promociones</div>
+  <h2>De un programa de puntos a una herramienta comercial medible</h2>
+  <p>Ampliación implementada el 11 de septiembre de 2026 sobre el mismo servidor, la misma web y la misma app. La regla principal: ninguna promoción existe solo para "dar descuento". Cada una se define como <strong>OBJETIVO → CONDICIÓN → BENEFICIO → RESTRICCIONES → VIGENCIA → EXISTENCIAS → PUBLICIDAD → RESULTADO</strong>, y el sistema mide si movió el ticket, los litros, la frecuencia o los clientes.</p>
+
+  <h3>Módulos y estado</h3>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Módulo</th><th>Qué hace</th><th>Dónde vive</th></tr></thead>
+    <tbody>
+      <tr><td>Investigación de campañas</td><td>Registro de campañas de competidores por tipo (precio, descuento por litro, tarjetas bancarias, cashback, puntos, temporadas, flotillas, taxis, combustible + tienda, combustible + lavado, aliados), con fecha, región, estado, ciudad, estación, público, beneficio, vigencia y resultado calificado. Comparativa por tipo y competidor.</td><td>Panel → Investigación</td></tr>
+      <tr><td>Generador de promociones</td><td>El administrador elige un objetivo (ticket, litros, frecuencia, nuevos, inactivos, Premium, Diésel, tienda, servicios, fidelizar, pagos digitales), combustibles, ubicación, tipo de cliente y consumo; el sistema propone promociones con condición, beneficio, costo estimado, indicador y riesgo, listas para guardar como borrador.</td><td>Panel → Generador</td></tr>
+      <tr><td>Motor de reglas</td><td>Condiciones por fecha, día, horario, estación, estado, ciudad, combustible, monto, litros, método de pago, tipo de cliente, segmento, visitas en el periodo, consumo mensual y acumulado; límites totales, por cliente, por día y por mes; descuento máximo; existencias; acumulabilidad, exclusiones, prioridad y máximo por transacción. Se evalúa antes de cobrar (vista previa) y al registrar.</td><td>Servidor: <code>promo/engine.ts</code></td></tr>
+      <tr><td>Promociones combinadas</td><td>Una campaña agrupa varias promociones. "Mes del Cliente" trae cinco: $500 → 50 puntos, $700 → $30 de dinero virtual, Premium → puntos dobles, 30 L → cupón de café, 5 cargas → $100. El motor decide cuáles se apilan y en qué orden.</td><td>Panel → Campañas</td></tr>
+      <tr><td>Restricciones y términos</td><td>Texto obligatorio generado a partir de las reglas: estaciones participantes, combustible, compra mínima, acumulabilidad, límite diario, existencias, vigencia. Se muestra en el panel, en la isla, en el portal y en todos los formatos publicitarios.</td><td>Servidor: <code>promo/terms.ts</code></td></tr>
+      <tr><td>Dinero virtual</td><td>Saldo disponible, generado, utilizado y expirado; cada abono tiene origen (promoción, cashback, bonificación, referido, campaña, cumpleaños, fidelización), estación, transacción, fecha de expiración y estado (activo, parcialmente utilizado, utilizado, expirado, cancelado). Se gasta primero lo que vence antes y no acumula puntos sobre la parte pagada con él.</td><td>Isla, portal y Panel → Dinero virtual</td></tr>
+      <tr><td>Asociados comerciales</td><td>Cafeterías, restaurantes, lavados, talleres, refaccionarias, supermercados, bancos, aseguradoras, movilidad y comercios locales, con beneficios, inventario propio, prefijo de cupón, vigencia y estaciones participantes.</td><td>Panel → Asociados</td></tr>
+      <tr><td>Existencias</td><td>Cualquier promoción o beneficio de asociado puede tener inventario: iniciales, utilizadas, restantes, porcentaje y fecha de agotamiento. Al llegar a cero pasa a "Agotada" automáticamente y deja de aplicar.</td><td>Panel → Promociones</td></tr>
+      <tr><td>Ticket promedio escalonado</td><td>Escalones $400 → 10 pts, $500 → 20 pts, $600 → $20, $700 → $35, $800 → $50. En la isla y el portal el cliente ve "Te faltan $80 para obtener $50 de dinero virtual" con barra de progreso. Indicadores: ticket antes y durante, incremento, litros, frecuencia, participantes, beneficios, costo, incremento de ventas y ROI.</td><td>Panel → Promociones → Impacto</td></tr>
+      <tr><td>Publicidad</td><td>Cada promoción genera título, subtítulo, descripción, llamada a la acción, términos, vigencia y texto corto en 15 formatos: app, web, banner, pantalla de estación, pantalla de surtidor, ticket, WhatsApp, SMS, correo, Facebook, Instagram, TikTok, push, QR y cartel.</td><td>Panel → Promociones → Publicidad</td></tr>
+      <tr><td>Segmentación</td><td>Nuevos, frecuentes, inactivos, VIP, alto y bajo consumo, motociclistas, taxis, conductores de plataforma, flotillas, y por estación, ciudad o estado de origen. Reglas fijas y explicables, calculadas al momento de la compra.</td><td>Panel → Segmentos</td></tr>
+      <tr><td>Dashboard</td><td>Ventas, ticket promedio y su incremento, litros, promociones activas, por vencer y agotadas, dinero virtual generado y utilizado, clientes nuevos y recurrentes, uso de promociones, costo y ROI; gráficas por día, por estación, por promoción y por campaña.</td><td>Panel → Dashboard</td></tr>
+      <tr><td>Evaluación de campañas</td><td>Antes, durante y después: ticket, litros, transacciones por día, clientes nuevos y recurrentes, costo de beneficios, ingresos y ROI, con veredicto (funcionó, parcial, sin impacto, pérdidas, sin datos) y recomendación (repetir o modificar).</td><td>Panel → Campañas → Evaluación</td></tr>
+      <tr><td>Experiencia del cliente</td><td>Promociones disponibles, cercanas y favoritas; dinero virtual, puntos, cupones, historial, próximos beneficios y progreso con barra.</td><td>Portal web y app Android</td></tr>
+      <tr><td>Notificaciones</td><td>Nueva promoción, promoción por vencer, dinero virtual por expirar, cupón por vencer, promoción cerca de agotarse, nuevo beneficio, cliente inactivo, cumpleaños y meta alcanzada. Las de servicio llegan a todos; las promocionales solo con consentimiento.</td><td>Panel → Notificaciones</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Diez promociones para vender más: el beneficio es para regresar</h3>
+  <p>Estas diez mecánicas están cargadas en la campaña "Regresa y gana" de los datos de demostración. La clave común: el beneficio no es un descuento inmediato sino dinero virtual condicionado a una segunda visita, con compra mínima siguiente, vigencia corta y uso único. La pregunta no es "cuánto descuento damos", sino "cuánto más compra el cliente y qué necesitamos ofrecer para lograrlo".</p>
+  <div class="tbl mid"><table>
+    <thead><tr><th>#</th><th>Promoción</th><th>Mecánica en el motor</th><th>Estado en la demo</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Carga $500 → $30 para regresar</td><td>Dinero virtual con compra mínima siguiente $400, vigencia 7 días, uso único, no acumulable.</td><td>Borrador (alternativa a la escalera)</td></tr>
+      <tr><td>2</td><td>Carga $600 → $50 para tu próxima visita</td><td>Igual, con compra siguiente mínima $500.</td><td>Borrador (alternativa)</td></tr>
+      <tr><td>3</td><td>Carga $400 → $20; regresa en 5 días con $400 → otros $30</td><td>Dos promociones: la segunda usa la regla "regreso dentro de N días tras carga mínima". Dirigida a bajo consumo y nuevos.</td><td>Activa</td></tr>
+      <tr><td>4</td><td>Carga $500 → desbloquea $100 en beneficios</td><td>Beneficio dividido: $30 para combustible, $30 solo para tienda, cupón de café y cupón de lavado. El cliente percibe $100; el costo real es menor.</td><td>Borrador (alternativa)</td></tr>
+      <tr><td>5</td><td>Cadena de regresos: $30, $40 y $60</td><td>Regla "cadena": cada regreso dentro de 7 días paga el siguiente nivel; se reinicia si pasan más de 7 días.</td><td>Activa</td></tr>
+      <tr><td>6</td><td>Carga $500 + $100 en tienda → $50</td><td>Compra mínima de combustible y de tienda en la misma visita.</td><td>Activa</td></tr>
+      <tr><td>7</td><td>Carga $500 + café → $50 para regresar</td><td>Artículo requerido en el ticket (el despachador marca "café" al cobrar).</td><td>Activa</td></tr>
+      <tr><td>8</td><td>Tu tercera carga de $500 tiene premio</td><td>Visitas calificadas por monto: solo cuentan cargas de $500 o más; la tercera del mes entrega $100.</td><td>Activa</td></tr>
+      <tr><td>9</td><td>Escalera de consumo</td><td>Escalones $400 → $20, $500 → $30, $600 → $45, $700 → $60, $800 → $80 para la próxima visita, con compra mínima siguiente según el escalón.</td><td>Activa (no se apila con la meta personal)</td></tr>
+      <tr><td>10</td><td>Tu meta personal</td><td>Meta = ticket habitual + 10 %, redondeada a $50, entre $400 y $1,500; beneficio según tabla ($500 → $30, $700 → $60, $900 → $100); compra siguiente mínima 90 % de la meta; vigencia 7 días. El motor estima probabilidad de regreso y rentabilidad esperada por cliente.</td><td>Activa (prioridad más alta)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p><strong>Ejemplo del motor:</strong> ticket habitual $450 → meta $500 → beneficio $30 → compra siguiente mínima $450 → vigencia 7 días → probabilidad de regreso estimada con su frecuencia → rentabilidad esperada = probabilidad × margen de la segunda visita − probabilidad × beneficio. Sin promoción: $500. Con promoción: $550 hoy + $500 en 7 días = $1,050 acumulados por un beneficio de $30 que solo se paga si regresa.</p></div>
+
+  <h3>Ejemplo de regla y sus textos</h3>
+  <div class="callout"><p><strong>Regla:</strong> "Si el cliente carga $700 o más de gasolina Regular los martes y jueves entre 14:00 y 18:00, recibe $30 de dinero virtual, mientras existan beneficios disponibles (800)."</p><p><strong>Restricciones generadas:</strong> Válida únicamente en estaciones participantes. Aplica únicamente para gasolina Regular. Compra mínima de $700 MXN en combustible en una sola transacción. Aplica únicamente los días martes, jueves. Horario de 14:00 a 18:00 horas. No acumulable con otras promociones. Máximo una promoción por cliente al día. Beneficio sujeto a disponibilidad y hasta agotar existencias. El dinero virtual vence a los 21 días; no es canjeable por efectivo ni transferible.</p></div>
+
+  <h3>Arquitectura</h3>
+  <p>Módulos separados en el servidor: clientes, estaciones, campañas, promociones, reglas, restricciones, asociados, inventario promocional, dinero virtual, puntos, cupones, transacciones, segmentos, publicidad, notificaciones y analítica. La API v1 ya es la misma que consumen la web, la app Android y la isla; el punto de venta o el controlador de estación se integran por <code>POST /v1/sales</code> con clave de idempotencia, y la vista previa <code>POST /v1/sales/preview</code> permite mostrar beneficios antes de cobrar. ERP y sistemas de pago se conectan como consumidores de los reportes y como método de pago adicional.</p>
+
+  <h3>Datos de demostración</h3>
+  <p>Grupo "Gasolineras del Bajío" con seis estaciones en Guanajuato, Querétaro y Jalisco; 240 clientes (particulares, taxis, motociclistas, conductores de plataforma y flotillas); 100 días de cargas generadas de forma determinista; nueve campañas: Mes del Cliente (activa, cinco promociones), Martes y jueves de Regular, Taxis y plataformas, Combustible + lavado AutoSpa, Paga digital, Bienvenida y reactivación, Regreso a clases 2026 (terminada), Verano 2026 (terminada) y Buen Fin 2026 (programada); cinco asociados y dieciséis campañas de competidores en investigación. Las fichas de investigación marcadas como "dato ilustrativo" no son hechos verificados.</p>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var ids=['n','f','l','mg','cpl','att','tt','mt','lift','redeem','cr','msgs','cm','sub'];
+  var scen={cons:{lift:4,redeem:85,cr:100},base:{lift:8,redeem:70,cr:100},opt:{lift:12,redeem:65,cr:70}};
+  var fmt=function(v){return (v<0?'−':'')+'$'+Math.abs(Math.round(v)).toLocaleString('es-MX');};
+  var pct=function(v){return v.toLocaleString('es-MX',{maximumFractionDigits:1})+' %';};
+  var lit=function(v){return Math.round(v).toLocaleString('es-MX')+' L';};
+  function read(){var o={};ids.forEach(function(k){o[k]=parseFloat(document.getElementById(k).value)||0;});return o;}
+  function calc(p){
+    var visits=p.n*p.f, liters=visits*p.l;
+    var fuelMargin=liters*p.mg;
+    var storeMargin=visits*p.att/100*p.tt*p.mt/100;
+    var baseMargin=fuelMargin+storeMargin;
+    var addLiters=liters*p.lift/100;
+    var inc=baseMargin*p.lift/100;
+    var facial=(liters+addLiters)*p.cpl/100;
+    var redeemed=facial*p.redeem/100;
+    var realCost=redeemed*p.cr/100;
+    var msgCost=p.n*p.msgs*p.cm;
+    var net=inc-realCost-msgCost-p.sub;
+    var be=baseMargin>0?(realCost+msgCost+p.sub)/baseMargin*100:0;
+    return {liters:liters,fuelMargin:fuelMargin,storeMargin:storeMargin,baseMargin:baseMargin,addLiters:addLiters,inc:inc,facial:facial,redeemed:redeemed,realCost:realCost,msgCost:msgCost,net:net,be:be};
+  }
+  function line(l,v,cls){return '<div class="line"><span>'+l+'</span><span class="v '+(cls||'')+'">'+v+'</span></div>';}
+  function render(){
+    var p=read(),r=calc(p),h='';
+    h+=line('Litros base de miembros al mes',lit(r.liters));
+    h+=line('Margen base: combustible + tienda',fmt(r.fuelMargin)+' + '+fmt(r.storeMargin));
+    h+=line('Litros adicionales atribuibles',lit(r.addLiters));
+    h+=line('Utilidad incremental bruta',fmt(r.inc),'pos');
+    h+=line('Valor facial emitido',fmt(r.facial));
+    h+=line('Valor facial canjeado',fmt(r.redeemed));
+    h+=line('Costo real de recompensas',fmt(-r.realCost),'neg');
+    h+=line('Costo de mensajes',fmt(-r.msgCost),'neg');
+    h+=line('Suscripción',fmt(-p.sub),'neg');
+    h+='<div class="line total"><span>Utilidad incremental neta al mes</span><span class="v '+(r.net>=0?'pos':'neg')+'">'+fmt(r.net)+'</span></div>';
+    h+=line('Lift de equilibrio',pct(r.be));
+    h+=line('Recompensa como % del margen por litro',pct(p.mg>0?p.cpl/100/p.mg*100:0));
+    document.getElementById('out').innerHTML=h;
+    var v=document.getElementById('verdict');
+    if(r.net>=0){v.textContent='Deja utilidad si el incremento real en cargas de miembros supera '+pct(r.be)+'. Con '+pct(p.lift)+' de lift, cada peso de costo regresa '+(r.inc/(r.realCost+r.msgCost+p.sub)).toLocaleString('es-MX',{maximumFractionDigits:1})+' pesos de utilidad.';}
+    else{v.textContent='Con estos supuestos pierde dinero: necesita al menos '+pct(r.be)+' de incremento en cargas, o bajar los centavos por litro y mover el canje a tienda.';}
+    renderScen(p);
+  }
+  function renderScen(p){
+    var rows=[['Lift supuesto',function(q){return pct(q.lift);}],['Probabilidad de canje',function(q){return pct(q.redeem);}],['Costo real / valor facial',function(q){return pct(q.cr);}],
+      ['Litros adicionales',function(q,r){return lit(r.addLiters);}],['Utilidad incremental bruta',function(q,r){return fmt(r.inc);}],['Costo real de recompensas',function(q,r){return fmt(-r.realCost);}],
+      ['Mensajes + suscripción',function(q,r){return fmt(-(r.msgCost+q.sub));}],['Utilidad neta al mes',function(q,r){return fmt(r.net);}],['Lift de equilibrio',function(q,r){return pct(r.be);}]];
+    var h='';
+    rows.forEach(function(row){h+='<tr><td>'+row[0]+'</td>';['cons','base','opt'].forEach(function(s){var q=Object.assign({},p,scen[s]);var r=calc(q);h+='<td class="num">'+row[1](q,r)+'</td>';});h+='</tr>';});
+    document.querySelector('#scenTable tbody').innerHTML=h;
+  }
+  ids.forEach(function(k){document.getElementById(k).addEventListener('input',function(){document.querySelectorAll('.scen button').forEach(function(b){b.classList.remove('on');});render();});});
+  document.querySelectorAll('.scen button').forEach(function(b){b.addEventListener('click',function(){var s=scen[b.getAttribute('data-scen')];Object.keys(s).forEach(function(k){document.getElementById(k).value=s[k];});document.querySelectorAll('.scen button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render();});});
+  render();
+  var links=Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);});}});},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){io.observe(s);});
+  }
+})();
+</script>

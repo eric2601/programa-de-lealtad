@@ -1,0 +1,24 @@
+node_modules/
+dist/
+data/
+*.db
+*.db-wal
+*.db-shm
+.env
+.DS_Store
+
+# Android: compilaciones, caché de Gradle y rutas locales del SDK
+android/.gradle/
+android/.kotlin/
+android/**/build/
+android/local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+.idea/
+*.iml
+
+# Herramientas locales
+.claude/settings.local.json
+*.log

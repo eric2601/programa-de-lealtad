@@ -1,0 +1,21 @@
+{
+  "name": "lealtad-gasolineras",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Plataforma de lealtad por número telefónico para gasolineras en México (MVP)",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w server && npm run build -w web",
+    "test": "npm test -w server",
+    "start": "npm start -w server"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.12": true
+  }
+}
